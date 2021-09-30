@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCLI", "EasyCLI\EasyCLI.csproj", "{1825CA4A-D342-4163-8E1C-AA19A7B75A33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{EB73FC86-EC2E-44C7-BD5A-ED260C8BEEC6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1825CA4A-D342-4163-8E1C-AA19A7B75A33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1825CA4A-D342-4163-8E1C-AA19A7B75A33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1825CA4A-D342-4163-8E1C-AA19A7B75A33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1825CA4A-D342-4163-8E1C-AA19A7B75A33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB73FC86-EC2E-44C7-BD5A-ED260C8BEEC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB73FC86-EC2E-44C7-BD5A-ED260C8BEEC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB73FC86-EC2E-44C7-BD5A-ED260C8BEEC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB73FC86-EC2E-44C7-BD5A-ED260C8BEEC6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
