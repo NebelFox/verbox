@@ -17,11 +17,6 @@ namespace EasyCLI
             _commands = new Dictionary<string, Command>();
         }
 
-        private bool Contains(string name)
-        {
-            return _commands.ContainsKey(name);
-        }
-
         public void Add(string name, Command command)
         {
             if (Contains(name))
@@ -31,13 +26,34 @@ namespace EasyCLI
             _commands[name] = command;
         }
 
+        private bool Contains(string name)
+        {
+            return _commands.ContainsKey(name);
+        }
+
+        public void Run()
+        {
+            _isRunning = true;
+            while (_isRunning)
+            {
+                try
+                {
+                    Execute(Console.ReadLine());
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void Execute(string command)
         {
             IEnumerable<string> tokens = command.Split();
             (Dictionary<string, string> kwargs,
              HashSet<string> switches,
              List<string> args) = _optionsParser.Parse(tokens);
-            
+
             if (args.Count == 0)
                 throw new ArgumentException(
                     "A command must contain at least 1 positional argument");
@@ -54,12 +70,6 @@ namespace EasyCLI
         public void Terminate()
         {
             _isRunning = false;
-        }
-
-        public void Run()
-        {
-            _isRunning = true;
-            while (_isRunning) Execute(Console.ReadLine());
         }
     }
 }
