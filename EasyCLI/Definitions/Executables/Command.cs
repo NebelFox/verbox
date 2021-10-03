@@ -16,7 +16,7 @@ namespace EasyCLI
         private readonly LinkedList<(string, string)> _args;
         private readonly LinkedList<string> _examples;
 
-        public Command(string name) : base(name)
+        public Command(string name, string brief) : base(name, brief)
         {
             _kwargs = new LinkedList<(string, string)>();
             _switches = new LinkedList<(string, string)>();
