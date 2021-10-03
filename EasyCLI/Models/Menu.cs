@@ -20,7 +20,7 @@ namespace EasyCLI
         private readonly string _farewell;
         private bool _isRunning;
 
-        public Menu(OptionsParser optionsParser,
+        internal Menu(OptionsParser optionsParser,
                       string help,
                       Namespace rootNamespace,
                       Style style,
