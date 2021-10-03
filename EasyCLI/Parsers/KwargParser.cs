@@ -22,6 +22,14 @@
             _minValueLength = minValueLength;
         }
 
+        internal bool TryParseToOptions(string token, Options options)
+        {
+            if (!TryParse(token, out string key, out string value))
+                return false;
+            options.AddKwarg(key, value);
+            return true;
+        }
+
         public bool TryParse(string token, out string key, out string value)
         {
             if (IsTokenLengthValid(token) && IsPrefixed(token))

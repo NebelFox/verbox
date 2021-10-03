@@ -16,6 +16,14 @@ namespace EasyCLI.Parsers
             _longKeyPrefix = longKeyPrefix;
             _minLongKeyLength = minLongKeyLength;
         }
+
+        internal bool TryParseToOptions(string token, Options options)
+        {
+            if (!TryParse(token, out string[] keys))
+                return false;
+            options.AddSwitches(keys);
+            return true;
+        }
         
         public bool TryParse(string token, out string[] keys)
         {

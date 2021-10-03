@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using EasyCLI.Parsers;
+﻿using System.Collections.Generic;
 
-namespace EasyCLI
+namespace EasyCLI.Parsers
 {
-    using Options = Tuple<Dictionary<string, string>, HashSet<string>, List<string>>;
     public class OptionsParser
     {
         private readonly KwargParser _kwargParser;
@@ -17,26 +14,23 @@ namespace EasyCLI
             _kwargParser = kwargParser;
         }
 
-        public Options Parse(IEnumerable<string> tokens)
+        internal Options Parse(IEnumerable<string> tokens)
         {
             var options = new Options(new Dictionary<string, string>(),
                                       new HashSet<string>(),
-                                      new List<string>());
+                                      new LinkedList<string>());
             foreach (string token in tokens)
-                Parse(token, ref options);
+                Parse(token, options);
 
             return options;
         }
 
         private void Parse(string token,
-                           ref Options options)
+                           Options options)
         {
-            if (_kwargParser.TryParse(token, out string key, out string value))
-                options.Item1.Add(key, value);
-            else if (_switchParser.TryParse(token, out string[] keys))
-                options.Item2.UnionWith(keys);
-            else
-                options.Item3.Add(token);
+            if (!(_kwargParser.TryParseToOptions(token, options)
+                  || _switchParser.TryParseToOptions(token, options)))
+                options.AddArg(token);
         }
     }
 }
