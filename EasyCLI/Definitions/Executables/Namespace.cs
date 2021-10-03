@@ -11,7 +11,7 @@ namespace EasyCLI
     {
         private readonly LinkedList<ExecutableDefinition> _members;
         
-        internal Namespace() : base(string.Empty, string.Empty)
+        internal Namespace() : this(string.Empty, string.Empty)
         {}
 
         public Namespace(string name, string brief) : base(name, brief)
