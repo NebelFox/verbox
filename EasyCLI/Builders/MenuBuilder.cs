@@ -1,6 +1,5 @@
 ﻿using EasyCLI.Definitions.Executables;
 using EasyCLI.Models.Styles;
-using EasyCLI.Parsers;
 
 // ReSharper disable once CheckNamespace
 namespace EasyCLI
@@ -58,20 +57,36 @@ namespace EasyCLI
 
         public Menu Build()
         {
-            var style = new Style("$ ", " - ", "\n");
-            var help = string.Join($"{style.Separator}\n",
-                                   _title,
-                                   string.Join(style.Separator, _header),
-                                   _rootNamespace.BuildHelp(style),
-                                   string.Join(style.Separator, _footer));
-            var optionsParser = new OptionsParser(new KwargParser("--", "="),
-                                                  new SwitchParser("-", "--"));
-            return new Menu(optionsParser,
-                            help,
+            Style style = BuildStyle();
+            string help = BuildHelp(style);
+            return new Menu(help,
                             _rootNamespace,
-                            style,
-                            string.Join(style.Separator, _greeting),
-                            string.Join(style.Separator, _farewell));
+                            style);
+        }
+
+        private Style BuildStyle()
+        {
+            return new Style(new DialogueStyle(string.Join('\n', _greeting),
+                                               string.Join('\n', _farewell),
+                                               "$ ",
+                                               "\n"),
+                             new InputStyle(' ',
+                                            "'\"",
+                                            '\\'),
+                             new OptionsStyle("--",
+                                             "=",
+                                             "-",
+                                             "--"),
+                             new HelpStyle(" - "));
+        }
+
+        private string BuildHelp(Style style)
+        {
+            return string.Join($"{style.Dialogue.ExecutionSeparator}\n",
+                               _title,
+                               string.Join('\n', _header),
+                               _rootNamespace.BuildHelp(style),
+                               string.Join('\n', _footer));
         }
     }
 }

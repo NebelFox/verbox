@@ -10,10 +10,11 @@ namespace EasyCLI
     public class Namespace : ExecutableDefinition
     {
         private readonly LinkedList<ExecutableDefinition> _members;
-        
-        internal Namespace() : this(string.Empty, string.Empty)
-        {}
 
+        internal Namespace() : this(string.Empty, string.Empty)
+        { }
+
+        // ReSharper disable once MemberCanBePrivate.Global
         public Namespace(string name, string brief) : base(name, brief)
         {
             _members = new LinkedList<ExecutableDefinition>();
@@ -30,25 +31,28 @@ namespace EasyCLI
             _members.AddLast(definition);
             return this;
         }
-        
+
         // ReSharper disable once UseDeconstructionOnParameter
         internal override string BuildHelp(Style style)
         {
-            return string.Join(style.Separator,
-                               _members.Select(member =>
-                                                   $"{style.PromptIndicator}{member.Name}{style.CommandHelpSuffix}{member.Brief}"));
+            string prefix = style.Dialogue.PromptIndicator;
+            string suffix = style.Help.NameBriefSeparator;
+            return string.Join('\n', _members.Select(m => $"{prefix}{m.Name}{suffix}{m.Brief}"));
         }
 
         internal override Executable Build(Style style)
         {
-            return new Models.Executables.Namespace(BuildHelp(style),
-                                                    _members.Select(member => (member.Name, member.Build(style))));
+            return Build(style, BuildHelp(style));
         }
 
         internal Models.Executables.Namespace Build(Style style, string help)
         {
-            return new Models.Executables.Namespace(help,
-                                                    _members.Select(member => (member.Name, member.Build(style))));
+            return new Models.Executables.Namespace(help, BuildMembers(style));
+        }
+
+        private IEnumerable<(string, Executable)> BuildMembers(Style style)
+        {
+            return _members.Select(m => (m.Name, m.Build(style)));
         }
     }
 }

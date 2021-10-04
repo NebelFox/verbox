@@ -1,6 +1,7 @@
 ﻿namespace EasyCLI.Models.Styles
 {
-    public record Style(string PromptIndicator,
-                        string CommandHelpSuffix,
-                        string Separator);
+    public record Style(DialogueStyle Dialogue,
+                        InputStyle Input,
+                        OptionsStyle Optionses,
+                        HelpStyle Help);
 }

@@ -1,6 +1,6 @@
 ﻿namespace EasyCLI.Models.Styles
 {
-    public record OptionStyle(string KwargPrefix,
+    public record OptionsStyle(string KwargPrefix,
                                string KwargSuffix,
                                string SwitchShortPrefix,
                                string SwitchLongPrefix);

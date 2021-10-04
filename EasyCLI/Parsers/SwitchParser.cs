@@ -5,15 +5,15 @@ namespace EasyCLI.Parsers
 {
     public class SwitchParser
     {
-        private readonly string _shortKeyPrefix;
-        private readonly string _longKeyPrefix;
+        private readonly string _shortPrefix;
+        private readonly string _longPrefix;
         private readonly int _minLongKeyLength;
-        private int MinLongTokenLength => _longKeyPrefix.Length + _minLongKeyLength;
+        private int MinLongTokenLength => _longPrefix.Length + _minLongKeyLength;
         
-        public SwitchParser(string shortKeyPrefix, string longKeyPrefix, int minLongKeyLength=2)
+        public SwitchParser(string shortPrefix, string longPrefix, int minLongKeyLength=2)
         {
-            _shortKeyPrefix = shortKeyPrefix;
-            _longKeyPrefix = longKeyPrefix;
+            _shortPrefix = shortPrefix;
+            _longPrefix = longPrefix;
             _minLongKeyLength = minLongKeyLength;
         }
 
@@ -35,7 +35,7 @@ namespace EasyCLI.Parsers
 
         private bool TryGetLongKeys(string token, ref string[] keys)
         {
-            if (!token.StartsWith(_longKeyPrefix)) 
+            if (!token.StartsWith(_longPrefix)) 
                 return false;
             keys = new []{TrimLongKeyPrefix(token)};
             return true;
@@ -43,7 +43,7 @@ namespace EasyCLI.Parsers
 
         private bool TryGetShortKeys(string token, ref string[] keys)
         {
-            if (!token.StartsWith(_shortKeyPrefix)) 
+            if (!token.StartsWith(_shortPrefix)) 
                 return false;
             keys = StringToArray(TrimShortKeyPrefix(token));
             return true;
@@ -51,12 +51,12 @@ namespace EasyCLI.Parsers
 
         private string TrimShortKeyPrefix(string token)
         {
-            return token[_shortKeyPrefix.Length..];
+            return token[_shortPrefix.Length..];
         }
 
         private string TrimLongKeyPrefix(string token)
         {
-            return token[_longKeyPrefix.Length..];
+            return token[_longPrefix.Length..];
         }
 
         private static string[] StringToArray(string s)

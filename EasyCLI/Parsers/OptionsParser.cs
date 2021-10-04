@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using EasyCLI.Models.Styles;
 
 namespace EasyCLI.Parsers
 {
@@ -13,6 +14,11 @@ namespace EasyCLI.Parsers
             _switchParser = switchParser;
             _kwargParser = kwargParser;
         }
+
+        public OptionsParser(OptionsStyle style)
+            : this(new KwargParser(style.KwargPrefix, style.KwargSuffix),
+                   new SwitchParser(style.SwitchShortPrefix, style.SwitchLongPrefix))
+        { }
 
         internal Options Parse(IEnumerable<string> tokens)
         {
