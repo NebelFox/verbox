@@ -2,6 +2,6 @@
 {
     public record Style(DialogueStyle Dialogue,
                         InputStyle Input,
-                        OptionsStyle Optionses,
+                        OptionsStyle Options,
                         HelpStyle Help);
 }

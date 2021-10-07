@@ -4,15 +4,15 @@ using System.Linq;
 
 namespace EasyCLI.Parsers
 {
-    public enum State
+        public class Splitter
     {
-        InQuotes,
-        InSeparator,
-        InWord
-    }
-
-    public class Splitter
-    {
+        private enum State
+        {
+            InQuotes,
+            InSeparator,
+            InWord
+        }
+        
         private readonly char _separator;
         private readonly IReadOnlySet<char> _quotes;
 

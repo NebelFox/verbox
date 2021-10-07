@@ -22,7 +22,7 @@ namespace EasyCLI
                       Style style)
         {
             _style = style;
-            _optionsParser = new OptionsParser(_style.Optionses);
+            _optionsParser = new OptionsParser(_style.Options);
             _commands = rootNamespace.Build(style, help);
             _splitter = new Splitter(_style.Input.Separator, _style.Input.Quotes);
         }
@@ -31,11 +31,9 @@ namespace EasyCLI
         {
             _isRunning = true;
             Console.WriteLine(_style.Dialogue.Greeting);
-            Console.Write(_style.Dialogue.ExecutionSeparator);
+            Console.Write(_style.Dialogue.SemanticSeparator);
             while (_isRunning)
-            {
                 Prompt();
-            }
 
             Console.WriteLine(_style.Dialogue.Farewell);
         }
@@ -65,7 +63,7 @@ namespace EasyCLI
             }
             finally
             {
-                Console.Write(_style.Dialogue.ExecutionSeparator);
+                Console.Write(_style.Dialogue.SemanticSeparator);
             }
         }
 

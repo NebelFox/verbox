@@ -16,14 +16,9 @@ namespace EasyCLI.Models.Executables
             if (context[HelpSwitch])
             {
                 if (context.OptionsCount > 1)
-                {
-                    Console.WriteLine(
-                        $"Command aborted as there was {HelpSwitch} switch with other options");
-                }
+                    Console.WriteLine($"Ambiguous command call: {HelpSwitch} with other options");
                 else
-                {
                     Help();
-                }
             }
             else
             {

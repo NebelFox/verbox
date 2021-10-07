@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using EasyCLI.Models;
 using EasyCLI.Models.Executables;
 using EasyCLI.Models.Styles;
 using EasyCLI.Definitions.Executables;
+using EasyCLI.Definitions.Options;
+using EasyCLI.Properties;
 
 // ReSharper disable once CheckNamespace
 namespace EasyCLI
@@ -11,17 +14,17 @@ namespace EasyCLI
     public class Command : ExecutableDefinition
     {
         private Action<Context> _action;
-        private readonly LinkedList<(string, string)> _kwargs;
-        private readonly LinkedList<(string, string)> _switches;
-        private readonly LinkedList<(string, string)> _args;
-        private readonly LinkedList<string> _examples;
+        private readonly LinkedList<KwargDefinition> _kwargs;
+        private readonly LinkedList<SwitchDefinition> _switches;
+        private readonly LinkedList<ArgDefinition> _args;
+        private readonly LinkedList<(string, string)> _examples;
 
         public Command(string name, string brief) : base(name, brief)
         {
-            _kwargs = new LinkedList<(string, string)>();
-            _switches = new LinkedList<(string, string)>();
-            _args = new LinkedList<(string, string)>();
-            _examples = new LinkedList<string>();
+            _kwargs = new LinkedList<KwargDefinition>();
+            _switches = new LinkedList<SwitchDefinition>();
+            _args = new LinkedList<ArgDefinition>();
+            _examples = new LinkedList<(string, string)>();
         }
 
         public Command WithDescription(string description)
@@ -30,27 +33,31 @@ namespace EasyCLI
             return this;
         }
 
-        public Command Arg(string name, string description)
+        public Command Kwarg(string name, string description, string defaultValue)
         {
-            _args.AddLast((name, description));
+            _kwargs.AddLast(new KwargDefinition(name, description, defaultValue));
+
             return this;
         }
 
-        public Command Kwarg(string name, string description)
+        public Command Switch(string name, string description, char shortForm)
         {
-            _kwargs.AddLast((name, description));
+            _switches.AddLast(new SwitchDefinition(name, description, shortForm));
+
             return this;
         }
 
-        public Command Switch(string name, string description)
+        public Command Arg(string name, string description, ArgTags tags = ArgTags.None)
         {
-            _switches.AddLast((name, description));
+            _args.AddLast(new ArgDefinition(name, description, tags));
+
             return this;
         }
 
-        public Command Example(string input)
+        public Command Example(string input, string explanation)
         {
-            _examples.AddLast(input);
+            _examples.AddLast((input, explanation));
+
             return this;
         }
 

@@ -1,5 +1,7 @@
-﻿using EasyCLI.Definitions.Executables;
+﻿using System.Collections.Generic;
+using EasyCLI.Definitions.Executables;
 using EasyCLI.Models.Styles;
+using EasyCLI.Properties;
 
 // ReSharper disable once CheckNamespace
 namespace EasyCLI
@@ -66,23 +68,32 @@ namespace EasyCLI
 
         private Style BuildStyle()
         {
-            return new Style(new DialogueStyle(string.Join('\n', _greeting),
-                                               string.Join('\n', _farewell),
-                                               "$ ",
-                                               "\n"),
-                             new InputStyle(' ',
-                                            "'\"",
-                                            '\\'),
-                             new OptionsStyle("--",
-                                             "=",
-                                             "-",
-                                             "--"),
-                             new HelpStyle(" - "));
+            return new Style(
+                new DialogueStyle(string.Join('\n', _greeting),
+                                  string.Join('\n', _farewell),
+                                  "$ ",
+                                  "\n"),
+                new InputStyle(' ',
+                               "'\"",
+                               '\\'),
+                new OptionsStyle("--",
+                                 "=",
+                                 "-",
+                                 "--"),
+                new HelpStyle("> ",
+                              " - ",
+                              "|",
+                              new Dictionary<ArgTags, string>
+                              {
+                                  { ArgTags.Optional, "[{0}]" },
+                                  { ArgTags.Collective, "{0}..." },
+                                  { ArgTags.Optional | ArgTags.Collective, "[{0}...]" }
+                              }));
         }
 
         private string BuildHelp(Style style)
         {
-            return string.Join($"{style.Dialogue.ExecutionSeparator}\n",
+            return string.Join($"{style.Dialogue.SemanticSeparator}\n",
                                _title,
                                string.Join('\n', _header),
                                _rootNamespace.BuildHelp(style),
