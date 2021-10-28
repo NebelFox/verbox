@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 
 namespace EasyCLI.Parsers
 {
@@ -20,7 +20,7 @@ namespace EasyCLI.Parsers
                         string quotes = "\"'")
         {
             _separator = separator;
-            _quotes = new HashSet<char>(quotes.AsEnumerable());
+            _quotes = new HashSet<char>(quotes);
         }
         
         public Splitter(char separator = ' ',
@@ -29,36 +29,33 @@ namespace EasyCLI.Parsers
         public IEnumerable<string> Split(string text)
         {
             var tokens = new LinkedList<string>();
-            var token = new LinkedList<char>();
+            var token = new StringBuilder();
             State state = State.InSeparator;
             var quote = '\0';
 
             foreach (char c in text)
             {
-                // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
                 switch (state)
                 {
                 case State.InQuotes:
+                    token.Append(c);
                     if (c == quote)
                     {
-                        tokens.AddLast(new string(token.ToArray()));
+                        tokens.AddLast(token.ToString());
                         token.Clear();
                         state = State.InSeparator;
-                    }
-                    else
-                    {
-                        token.AddLast(c);
                     }
                     break;
                 case State.InSeparator:
                     if (IsQuote(c))
                     {
                         quote = c;
+                        token.Append(c);
                         state = State.InQuotes;
                     }
                     else if (c != _separator)
                     {
-                        token.AddLast(c);
+                        token.Append(c);
                         state = State.InWord;
                     }
                     break;
@@ -70,15 +67,17 @@ namespace EasyCLI.Parsers
                     }
                     else if (c == _separator)
                     {
-                        tokens.AddLast(new string(token.ToArray()));
+                        tokens.AddLast(token.ToString());
                         token.Clear();
                         state = State.InSeparator;
                     }
                     else
                     {
-                        token.AddLast(c);
+                        token.Append(c);
                     }
                     break;
+                default:
+                    throw new InvalidOperationException($"Invalid state: {(int)state}");
                 }
             }
 
@@ -86,10 +85,10 @@ namespace EasyCLI.Parsers
             switch (state)
             {
             case State.InQuotes:
-                int position = text.Length - token.Count;
+                int position = text.Length - token.Length;
                 throw new FormatException($"No closing quote for quote at {position}");
             case State.InWord:
-                tokens.AddLast(new string(token.ToArray()));
+                tokens.AddLast(token.ToString());
                 break;
             }
 

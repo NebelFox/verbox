@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using EasyCLI.Definitions.Executables;
 using EasyCLI.Models.Styles;
 using EasyCLI.Properties;
@@ -76,10 +77,7 @@ namespace EasyCLI
                 new InputStyle(' ',
                                "'\"",
                                '\\'),
-                new OptionsStyle("--",
-                                 "=",
-                                 "-",
-                                 "--"),
+                new OptionStyle("--"),
                 new HelpStyle("> ",
                               " - ",
                               "|",

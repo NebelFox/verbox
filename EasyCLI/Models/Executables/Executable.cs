@@ -4,7 +4,7 @@ namespace EasyCLI.Models.Executables
 {
     internal abstract class Executable
     {
-        protected const string HelpSwitch = "help";
+        protected const string HelpSwitch = "--help";
         private readonly string _help;
         
         protected Executable(string help)
@@ -12,7 +12,7 @@ namespace EasyCLI.Models.Executables
             _help = help;
         }
 
-        public abstract void Execute(Context context);
+        public abstract void Execute(Menu source, string[] tokens);
 
         public void Help()
         {

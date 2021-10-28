@@ -1,27 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EasyCLI.Models.Executables
 {
+    using Arguments = IReadOnlyDictionary<string, object>;
     internal sealed class Command : Executable
     {
         private readonly Action<Context> _action;
-        
-        public Command(string help, Action<Context> action) : base(help)
+        private readonly Signature _signature;
+
+        public Command(string help, 
+                       Action<Context> action,
+                       Signature signature) : base(help)
         {
             _action = action;
+            _signature = signature;
         }
 
-        public override void Execute(Context context)
+        public override void Execute(Menu source, string[] tokens)
         {
-            if (context[HelpSwitch])
+            if (tokens.Contains(HelpSwitch))
             {
-                if (context.OptionsCount > 1)
-                    Console.WriteLine($"Ambiguous command call: {HelpSwitch} with other options");
-                else
-                    Help();
+                Help();
             }
             else
             {
+                Arguments arguments = _signature.ParseArguments(tokens);
+                var context = new Context(source, arguments);
                 _action.Invoke(context);
             }
         }

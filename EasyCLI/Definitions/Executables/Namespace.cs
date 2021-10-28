@@ -46,13 +46,16 @@ namespace EasyCLI
         {
             return _members.Select(m => (m.Name, m.Build(style)));
         }
-
-        // ReSharper disable once UseDeconstructionOnParameter
+        
         internal override string BuildHelp(Style style)
         {
-            string prefix = style.Help.NamespaceMemberPrefix;
-            string suffix = style.Help.NameBriefSeparator;
-            return string.Join('\n', _members.Select(m => $"{prefix}{m.Name}{suffix}{m.Brief}"));
+            return string.Join('\n', _members.Select(m => BuildMemberHelpRow(m, style)));
+        }
+
+        private static string BuildMemberHelpRow(ExecutableDefinition member, Style style)
+        {
+            return @$"{style.Help.NamespaceMemberPrefix}{member.Name}{
+                style.Help.NameBriefSeparator}{member.Brief}";
         }
     }
 }

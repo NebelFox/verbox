@@ -7,11 +7,8 @@ using EasyCLI.Parsers;
 // ReSharper disable once CheckNamespace
 namespace EasyCLI
 {
-    using Context = Models.Context;
-
     public sealed class Menu
     {
-        private readonly OptionsParser _optionsParser;
         private readonly Models.Executables.Namespace _commands;
         private readonly Style _style;
         private readonly Splitter _splitter;
@@ -22,7 +19,6 @@ namespace EasyCLI
                       Style style)
         {
             _style = style;
-            _optionsParser = new OptionsParser(_style.Options);
             _commands = rootNamespace.Build(style, help);
             _splitter = new Splitter(_style.Input.Separator, _style.Input.Quotes);
         }
@@ -69,10 +65,8 @@ namespace EasyCLI
 
         public void Execute(string command)
         {
-            IEnumerable<string> tokens = _splitter.Split(command);
-            Options options = _optionsParser.Parse(tokens);
-            var context = new Context(this, options);
-            _commands.Execute(context);
+            string[] tokens = _splitter.Split(command).ToArray();
+            _commands.Execute(this, tokens);
         }
 
         public void Terminate()
