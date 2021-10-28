@@ -1,4 +1,4 @@
-﻿namespace EasyCLI.Models.Styles
+﻿namespace Verbox.Models.Styles
 {
     public record Style(DialogueStyle Dialogue,
                         InputStyle Input,

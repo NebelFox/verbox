@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace EasyCLI.Models
+namespace Verbox.Models
 {
     public class Context
     {

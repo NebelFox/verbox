@@ -1,4 +1,4 @@
-﻿namespace EasyCLI.Models.Styles
+﻿namespace Verbox.Models.Styles
 {
     public record FrameStyle(string TopPattern,
                              string BottomPattern,

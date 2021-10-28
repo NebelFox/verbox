@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EasyCLI.Models.Styles;
-using EasyCLI.Parsers;
+using Verbox.Models.Styles;
+using Verbox.Parsers;
 
 // ReSharper disable once CheckNamespace
-namespace EasyCLI
+namespace Verbox
 {
     public sealed class Menu
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using EasyCLI.Properties;
+using Verbox.Properties;
 
-namespace EasyCLI.Models.Styles
+namespace Verbox.Models.Styles
 {
     public record HelpStyle(string NamespaceMemberPrefix,
                             string NameBriefSeparator,

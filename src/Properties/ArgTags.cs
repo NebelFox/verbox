@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyCLI.Properties
+namespace Verbox.Properties
 {
     [Flags]
     public enum ArgTags

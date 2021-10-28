@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EasyCLI.Models.Executables
+namespace Verbox.Models.Executables
 {
     internal sealed class Namespace : Executable
     {

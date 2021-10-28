@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyCLI.Models.Executables
+namespace Verbox.Models.Executables
 {
     internal abstract class Executable
     {

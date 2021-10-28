@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyCLI.Models.Parameters
+namespace Verbox.Models.Parameters
 {
     public record Positional(string Name, 
                              Type Type, 

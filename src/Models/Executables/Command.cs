@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EasyCLI.Models.Executables
+namespace Verbox.Models.Executables
 {
     using Arguments = IReadOnlyDictionary<string, object>;
     internal sealed class Command : Executable

@@ -1,7 +1,7 @@
-﻿using EasyCLI.Models.Executables;
-using EasyCLI.Models.Styles;
+﻿using Verbox.Models.Executables;
+using Verbox.Models.Styles;
 
-namespace EasyCLI.Definitions.Executables
+namespace Verbox.Definitions.Executables
 {
     public abstract class ExecutableDefinition
     {

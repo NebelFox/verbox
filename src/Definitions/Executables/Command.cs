@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using EasyCLI.Definitions;
-using EasyCLI.Models;
-using EasyCLI.Models.Executables;
-using EasyCLI.Models.Styles;
-using EasyCLI.Definitions.Executables;
+using Verbox.Definitions;
+using Verbox.Definitions.Executables;
+using Verbox.Models;
+using Verbox.Models.Executables;
+using Verbox.Models.Styles;
 
 // ReSharper disable once CheckNamespace
-namespace EasyCLI
+namespace Verbox
 {
     public class Command : ExecutableDefinition
     {

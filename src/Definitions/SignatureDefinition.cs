@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EasyCLI.Definitions.Parameters;
-using EasyCLI.Models;
-using EasyCLI.Models.Parameters;
-using EasyCLI.Models.Styles;
-using EasyCLI.Properties;
+using Verbox.Definitions.Parameters;
+using Verbox.Models;
+using Verbox.Models.Parameters;
+using Verbox.Models.Styles;
+using Verbox.Properties;
 
-namespace EasyCLI.Definitions
+namespace Verbox.Definitions
 {
     public class SignatureDefinition
     {

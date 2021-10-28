@@ -1,7 +1,7 @@
 ﻿using System;
-using EasyCLI.Properties;
+using Verbox.Properties;
 
-namespace EasyCLI.Definitions.Parameters
+namespace Verbox.Definitions.Parameters
 {
     public record PositionalDefinition(string Name, Type Type, ArgTags Tags);
 }

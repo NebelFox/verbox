@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EasyCLI.Models.Parameters;
-using EasyCLI.Models.Styles;
+using Verbox.Models.Parameters;
+using Verbox.Models.Styles;
 
-namespace EasyCLI.Models
+namespace Verbox.Models
 {
     using Arguments = IReadOnlyDictionary<string, object>;
 
