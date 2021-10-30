@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Verbox.Parsers
+namespace Verbox.Text
 {
         public class Splitter
     {
