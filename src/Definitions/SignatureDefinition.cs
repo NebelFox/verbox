@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Verbox.Definitions.Parameters;
 using Verbox.Models;
 using Verbox.Models.Parameters;
@@ -13,6 +15,17 @@ namespace Verbox.Definitions
 
     public class SignatureDefinition
     {
+        private static readonly Regex ParameterDefinitionRegex = new(
+            @"^(?<option>--(?<names> [a-zA-Z0-9]+ (?: - [a-zA-Z0-9]+ ){0,2} )\s*)?
+                    (?<positional>
+                        (?:(?<optional>\[)|(?<!\[) )
+                        (?: < (?<name> [a-zA-Z0-9]+ (?: - [a-zA-Z0-9]+ ){0,2} )
+                            (?: \: (?<type> [a-zA-Z0-9]+ (?: - [a-zA-Z0-9]+ ){0,2} ) )?
+                            (?<collective> \.{3} )? > )
+                        (?(optional) (\])|(?!\]) ))?
+                    (?(option)(\s*=\s*(?<default>\S+))?|)$",
+            RegexOptions.IgnorePatternWhitespace);
+
         private readonly LinkedList<PositionalDefinition> _positionals;
         private readonly LinkedList<string> _switches;
         private readonly LinkedList<OptionDefinition> _options;
@@ -24,9 +37,50 @@ namespace Verbox.Definitions
             _options = new LinkedList<OptionDefinition>();
         }
 
+        public SignatureDefinition Parameter(string definition)
+        {
+            Match match = ParameterDefinitionRegex.Match(definition);
+            if (match.Success == false
+             || match.Groups["option"].Success == false && match.Groups["positional"].Success == false)
+                throw new ArgumentException("Invalid definition format", nameof(definition));
+
+            if (match.Groups["positional"].Success == false)
+            {
+                Console.WriteLine($"// switch | name: {match.Groups["names"].Value}");
+                return Option(match.Groups["names"].Value);
+            }
+
+            string name = match.Groups["name"].Value;
+            string type = match.Groups["type"].Success ? match.Groups["type"].Value : "string";
+
+            ArgTags tags = ArgTags.None;
+            if (match.Groups["optional"].Success)
+                tags |= ArgTags.Optional;
+            if (match.Groups["collective"].Success)
+                tags |= ArgTags.Collective;
+
+            if (match.Groups["option"].Success == false)
+            {
+                Console.WriteLine($"// positional | name: {name} | type: {type} | tags: {tags}");
+                return Positional(name,
+                                  type,
+                                  tags);
+            }
+            
+            string @default = match.Groups["default"].Success ? match.Groups["default"].Value : null;
+            Console.WriteLine(@$"// option | name: {match.Groups["names"].Value} | parameter: {{name: {
+                name} | type: {type} | tags: {tags}}} | default: {@default}");
+            return Option(match.Groups["names"].Value,
+                          name,
+                          type,
+                          tags,
+                          @default);
+
+        }
+
         public SignatureDefinition Positional(string name,
-                                               string type,
-                                               ArgTags tags = ArgTags.None)
+                                              string type,
+                                              ArgTags tags = ArgTags.None)
         {
             _positionals.AddLast(new PositionalDefinition(name, type, tags));
             return this;

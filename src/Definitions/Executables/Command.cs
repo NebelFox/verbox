@@ -31,9 +31,10 @@ namespace Verbox
             return this;
         }
 
-        public Command Parametrize(SignatureDefinition signature)
+        public Command Parameters(params string[] definitions)
         {
-            _signature = signature;
+            foreach (string definition in definitions)
+                _signature.Parameter(definition);
             return this;
         }
 
