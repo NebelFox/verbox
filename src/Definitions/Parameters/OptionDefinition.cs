@@ -2,5 +2,5 @@
 {
     public record OptionDefinition(string Name, 
                                    PositionalDefinition Parameter, 
-                                   object Default);
+                                   string Default);
 }

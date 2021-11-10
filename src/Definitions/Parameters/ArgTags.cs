@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Verbox.Properties
+namespace Verbox.Definitions.Parameters
 {
     [Flags]
     public enum ArgTags

@@ -3,10 +3,13 @@ using System.Linq;
 using Verbox.Definitions.Executables;
 using Verbox.Models.Executables;
 using Verbox.Models.Styles;
+using Verbox.Text;
 
 // ReSharper disable once CheckNamespace
 namespace Verbox
 {
+    using Typeset = IReadOnlyDictionary<string, Type>;
+    
     public class Namespace : ExecutableDefinition
     {
         private readonly LinkedList<ExecutableDefinition> _members;
@@ -32,19 +35,19 @@ namespace Verbox
             return this;
         }
 
-        internal override Executable Build(Style style)
+        internal override Executable Build(Style style, Typeset typeset)
         {
-            return Build(style, BuildHelp(style));
+            return Build(style, BuildHelp(style), typeset);
         }
 
-        internal Models.Executables.Namespace Build(Style style, string help)
+        internal Models.Executables.Namespace Build(Style style, string help, Typeset typeset)
         {
-            return new Models.Executables.Namespace(help, BuildMembers(style));
+            return new Models.Executables.Namespace(help, BuildMembers(style, typeset));
         }
 
-        private IEnumerable<(string, Executable)> BuildMembers(Style style)
+        private IEnumerable<(string, Executable)> BuildMembers(Style style, Typeset typeset)
         {
-            return _members.Select(m => (m.Name, m.Build(style)));
+            return _members.Select(m => (m.Name, m.Build(style, typeset)));
         }
         
         internal override string BuildHelp(Style style)
@@ -54,8 +57,9 @@ namespace Verbox
 
         private static string BuildMemberHelpRow(ExecutableDefinition member, Style style)
         {
-            return @$"{style.Help.NamespaceMemberPrefix}{member.Name}{
-                style.Help.NameBriefSeparator}{member.Brief}";
+            return string.Format(style.Help.NamespaceMemberFormat, 
+                                 member.Name, 
+                                 member.Brief);
         }
     }
 }

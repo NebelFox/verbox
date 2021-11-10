@@ -1,12 +1,16 @@
-﻿using Verbox.Models.Executables;
+﻿using System.Collections.Generic;
+using Verbox.Models.Executables;
 using Verbox.Models.Styles;
+using Verbox.Text;
 
 namespace Verbox.Definitions.Executables
 {
+    using Typeset = IReadOnlyDictionary<string, Type>;
+    
     public abstract class ExecutableDefinition
     {
         internal string Name { get; }
-        internal string Brief { get; set; }
+        internal string Brief { get; }
         internal string Description { get; set; }
 
         private protected ExecutableDefinition(string name)
@@ -22,6 +26,6 @@ namespace Verbox.Definitions.Executables
 
         internal abstract string BuildHelp(Style style);
 
-        internal abstract Executable Build(Style style);
+        internal abstract Executable Build(Style style, Typeset typeset);
     }
 }

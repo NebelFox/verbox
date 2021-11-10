@@ -1,7 +1,6 @@
-﻿using System;
-using Verbox.Properties;
-
-namespace Verbox.Definitions.Parameters
+﻿namespace Verbox.Definitions.Parameters
 {
-    public record PositionalDefinition(string Name, Type Type, ArgTags Tags);
+    public record PositionalDefinition(string Name, 
+                                       string Type, 
+                                       ArgTags Tags);
 }

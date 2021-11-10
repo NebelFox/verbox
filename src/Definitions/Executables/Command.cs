@@ -5,10 +5,14 @@ using Verbox.Definitions.Executables;
 using Verbox.Models;
 using Verbox.Models.Executables;
 using Verbox.Models.Styles;
+using Verbox.Text;
+using Type = Verbox.Text.Type;
 
 // ReSharper disable once CheckNamespace
 namespace Verbox
 {
+    using Typeset = IReadOnlyDictionary<string, Type>;
+    
     public class Command : ExecutableDefinition
     {
         private Action<Context> _action;
@@ -17,6 +21,7 @@ namespace Verbox
 
         public Command(string name, string brief) : base(name, brief)
         {
+            _signature = new SignatureDefinition();
             _examples = new LinkedList<(string, string)>();
         }
 
@@ -44,12 +49,13 @@ namespace Verbox
             return this;
         }
 
-        internal override Executable Build(Style style)
+        internal override Executable Build(Style style, Typeset typeset)
         {
-            _signature ??= new SignatureDefinition();
             return new Models.Executables.Command(BuildHelp(style), 
                                                   _action, 
-                                                  _signature.Build(style.Option));
+                                                  _signature.Build(style.Option, 
+                                                                   typeset,
+                                                                   new Tokenizer("'\"", style.Option.Prefix)));
         }
 
         internal override string BuildHelp(Style style)

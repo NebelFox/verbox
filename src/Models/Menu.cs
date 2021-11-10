@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Verbox.Models.Styles;
-using Verbox.Parsers;
+using Verbox.Text;
+using Type = Verbox.Text.Type;
 
 // ReSharper disable once CheckNamespace
 namespace Verbox
 {
+    using Typeset = IReadOnlyDictionary<string, Type>;
     public sealed class Menu
     {
         private readonly Models.Executables.Namespace _commands;
@@ -16,10 +18,11 @@ namespace Verbox
 
         internal Menu(string help,
                       Namespace rootNamespace,
-                      Style style)
+                      Style style,
+                      Typeset typeset)
         {
             _style = style;
-            _commands = rootNamespace.Build(style, help);
+            _commands = rootNamespace.Build(style, help, typeset);
             _splitter = new Splitter(_style.Input.Separator, _style.Input.Quotes);
         }
 

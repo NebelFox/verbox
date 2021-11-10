@@ -1,28 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Verbox.Definitions.Parameters;
 using Verbox.Models;
 using Verbox.Models.Parameters;
 using Verbox.Models.Styles;
-using Verbox.Properties;
+using Verbox.Text;
+using Type = Verbox.Text.Type;
 
 namespace Verbox.Definitions
 {
+    using Typeset = IReadOnlyDictionary<string, Type>;
+
     public class SignatureDefinition
     {
         private readonly LinkedList<PositionalDefinition> _positionals;
+        private readonly LinkedList<string> _switches;
         private readonly LinkedList<OptionDefinition> _options;
 
         public SignatureDefinition()
         {
             _positionals = new LinkedList<PositionalDefinition>();
+            _switches = new LinkedList<string>();
             _options = new LinkedList<OptionDefinition>();
         }
 
         public SignatureDefinition Positional(string name,
-                                              Type type,
-                                              ArgTags tags = ArgTags.None)
+                                               string type,
+                                               ArgTags tags = ArgTags.None)
         {
             _positionals.AddLast(new PositionalDefinition(name, type, tags));
             return this;
@@ -31,53 +35,56 @@ namespace Verbox.Definitions
         public SignatureDefinition Positional(string name,
                                               ArgTags tags = ArgTags.None)
         {
-            return Positional(name, typeof(string), tags);
+            return Positional(name, "string", tags);
         }
 
         public SignatureDefinition Option(string name,
                                           string paramName,
-                                          Type paramType,
+                                          string paramType,
                                           ArgTags paramTags = ArgTags.None,
-                                          object defaultValue = null)
+                                          string defaultValue = null)
         {
-            _options.AddLast(new OptionDefinition(
-                                 name,
-                                 new PositionalDefinition(paramName,
-                                                          paramType,
-                                                          paramTags),
-                                 defaultValue));
+            var parameter = new PositionalDefinition(paramName,
+                                                     paramType,
+                                                     paramTags);
+            _options.AddLast(new OptionDefinition(name, parameter, defaultValue));
             return this;
         }
 
         public SignatureDefinition Option(string name)
         {
-            return Option(name,
-                          string.Empty,
-                          typeof(bool),
-                          ArgTags.Optional,
-                          true);
+            _switches.AddLast(name);
+            return this;
         }
 
-        internal Signature Build(OptionStyle style)
-        {
-            return new Signature(_positionals.Select(BuildPositional),
-                                 _options.Select(BuildOption),
-                                 style);
-        }
-
-        private static Positional BuildPositional(PositionalDefinition definition)
+        private static Positional BuildPositional(PositionalDefinition definition, Typeset typeset)
         {
             return new Positional(definition.Name,
-                                  definition.Type,
-                                  definition.Tags.HasFlag(ArgTags.Optional) ? 0 : 1,
-                                  definition.Tags.HasFlag(ArgTags.Collective) ? int.MaxValue : 1);
+                                  typeset[definition.Type],
+                                  MinValuesCount(definition.Tags),
+                                  MaxValuesCount(definition.Tags));
         }
 
-        private static Option BuildOption(OptionDefinition definition)
+        private static int MinValuesCount(ArgTags tags) => tags.HasFlag(ArgTags.Optional) ? 0 : 1;
+
+        private static int MaxValuesCount(ArgTags tags) => tags.HasFlag(ArgTags.Collective) ? int.MaxValue : 1;
+
+        private static Option BuildOption(OptionDefinition definition, Typeset typeset)
         {
+            object defaultValue = definition.Default != null
+                ? typeset[definition.Parameter.Type].Parse(definition.Default)
+                : null;
             return new Option(definition.Name,
-                              BuildPositional(definition.Parameter),
-                              definition.Default);
+                              BuildPositional(definition.Parameter, typeset),
+                              defaultValue);
+        }
+
+        internal Signature Build(OptionStyle style, Typeset typeset, Tokenizer tokenizer)
+        {
+            return new Signature(_positionals.Select(p => BuildPositional(p, typeset)),
+                                 _switches,
+                                 _options.Select(o => BuildOption(o, typeset)),
+                                 tokenizer);
         }
 
         internal string BuildHelp()

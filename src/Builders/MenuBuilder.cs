@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Verbox.Definitions.Executables;
+using Verbox.Extensions;
 using Verbox.Models.Styles;
-using Verbox.Properties;
+using Type = Verbox.Text.Type;
 
 // ReSharper disable once CheckNamespace
 namespace Verbox
 {
     public class MenuBuilder
     {
+        public delegate bool TryParse<TValue>(string name, out TValue value);
+
         private const char Delimiter = '\n';
         private string[] _greeting;
         private string[] _farewell;
@@ -15,10 +19,12 @@ namespace Verbox
         private string[] _header;
         private string[] _footer;
         private readonly Namespace _rootNamespace;
+        private readonly Dictionary<string, Type> _types;
 
         public MenuBuilder()
         {
             _rootNamespace = new Namespace();
+            _types = new Dictionary<string, Type>();
         }
 
         public MenuBuilder Greeting(string greeting)
@@ -57,13 +63,42 @@ namespace Verbox
             return this;
         }
 
+        public MenuBuilder Type(string name, Type.ParseFunction parse)
+        {
+            _types.Add(name, new Type(name, parse));
+            return this;
+        }
+
+        public MenuBuilder Type<TEnum>() where TEnum : struct, Enum
+        {
+            return Type<TEnum>(typeof(TEnum).Name.PascalToDash());
+        }
+
+        public MenuBuilder Type<TEnum>(string name) where TEnum : struct, Enum
+        {
+            return Type(name,
+                        token =>
+                        {
+                            if (Enum.TryParse(token.DashToPascal(), out TEnum value))
+                                return value;
+                            return null;
+                        });
+        }
+
+        public MenuBuilder Type<TValue>(string name, TryParse<TValue> tryParse)
+        {
+            return Type(name,
+                        token => tryParse(token, out TValue value) ? value : null);
+        }
+
         public Menu Build()
         {
             Style style = BuildStyle();
             string help = BuildHelp(style);
             return new Menu(help,
                             _rootNamespace,
-                            style);
+                            style,
+                            _types);
         }
 
         private Style BuildStyle()
@@ -77,15 +112,7 @@ namespace Verbox
                                "'\"",
                                '\\'),
                 new OptionStyle("--"),
-                new HelpStyle("> ",
-                              " - ",
-                              "|",
-                              new Dictionary<ArgTags, string>
-                              {
-                                  { ArgTags.Optional, "[{0}]" },
-                                  { ArgTags.Collective, "{0}..." },
-                                  { ArgTags.Optional | ArgTags.Collective, "[{0}...]" }
-                              }));
+                new HelpStyle("> {0} - {1}"));
         }
 
         private string BuildHelp(Style style)
