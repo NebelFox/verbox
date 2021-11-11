@@ -16,7 +16,7 @@ namespace Verbox.Models.Executables
                     pair => new KeyValuePair<string, Executable>(pair.Item1, pair.Item2)));
         }
 
-        public override void Execute(Menu source, string[] tokens)
+        public override void Execute(Box box, string[] tokens)
         {
             if (tokens.Contains(HelpSwitch) && tokens.Length == 1)
             {
@@ -27,15 +27,15 @@ namespace Verbox.Models.Executables
                 if (tokens.Length == 0)
                     throw new ArgumentException("No command name provided");
                 
-                Execute(source, tokens[0], tokens[1..]);
+                Execute(box, tokens[0], tokens[1..]);
             }
         }
 
-        private void Execute(Menu source, string name, string[] tokens)
+        private void Execute(Box box, string name, string[] tokens)
         {
             if (!_members.TryGetValue(name, out Executable executable))
                 throw new ArgumentException($"Unknown command: '{name}'");
-            executable.Execute(source, tokens);
+            executable.Execute(box, tokens);
         }
     }
 }

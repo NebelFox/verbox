@@ -18,7 +18,7 @@ namespace Verbox.Models.Executables
             _signature = signature;
         }
 
-        public override void Execute(Menu source, string[] tokens)
+        public override void Execute(Box box, string[] tokens)
         {
             if (tokens.Contains(HelpSwitch))
             {
@@ -27,7 +27,7 @@ namespace Verbox.Models.Executables
             else
             {
                 Arguments arguments = _signature.ParseArguments(tokens);
-                var context = new Context(source, arguments);
+                var context = new Context(box, arguments);
                 _action.Invoke(context);
             }
         }

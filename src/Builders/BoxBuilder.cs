@@ -8,7 +8,7 @@ using Type = Verbox.Text.Type;
 // ReSharper disable once CheckNamespace
 namespace Verbox
 {
-    public class MenuBuilder
+    public class BoxBuilder
     {
         public delegate bool TryParse<TValue>(string name, out TValue value);
 
@@ -21,60 +21,60 @@ namespace Verbox
         private readonly Namespace _rootNamespace;
         private readonly Dictionary<string, Type> _types;
 
-        public MenuBuilder()
+        public BoxBuilder()
         {
             _rootNamespace = new Namespace();
             _types = new Dictionary<string, Type>();
         }
 
-        public MenuBuilder Greeting(string greeting)
+        public BoxBuilder Greeting(string greeting)
         {
             _greeting = greeting.Split(Delimiter);
             return this;
         }
 
-        public MenuBuilder Title(string title)
+        public BoxBuilder Title(string title)
         {
             _title = title;
             return this;
         }
 
-        public MenuBuilder Header(string header)
+        public BoxBuilder Header(string header)
         {
             _header = header.Split(Delimiter);
             return this;
         }
 
-        public MenuBuilder Command(ExecutableDefinition definition)
+        public BoxBuilder Command(ExecutableDefinition definition)
         {
             _rootNamespace.Member(definition);
             return this;
         }
 
-        public MenuBuilder Footer(string footer)
+        public BoxBuilder Footer(string footer)
         {
             _footer = footer.Split(Delimiter);
             return this;
         }
 
-        public MenuBuilder Farewell(string farewell)
+        public BoxBuilder Farewell(string farewell)
         {
             _farewell = farewell.Split(Delimiter);
             return this;
         }
 
-        public MenuBuilder Type(string name, Type.ParseFunction parse)
+        public BoxBuilder Type(string name, Type.ParseFunction parse)
         {
             _types.Add(name, new Type(name, parse));
             return this;
         }
 
-        public MenuBuilder Type<TEnum>() where TEnum : struct, Enum
+        public BoxBuilder Type<TEnum>() where TEnum : struct, Enum
         {
             return Type<TEnum>(typeof(TEnum).Name.PascalToDash());
         }
 
-        public MenuBuilder Type<TEnum>(string name) where TEnum : struct, Enum
+        public BoxBuilder Type<TEnum>(string name) where TEnum : struct, Enum
         {
             return Type(name,
                         token =>
@@ -85,17 +85,17 @@ namespace Verbox
                         });
         }
 
-        public MenuBuilder Type<TValue>(string name, TryParse<TValue> tryParse)
+        public BoxBuilder Type<TValue>(string name, TryParse<TValue> tryParse)
         {
             return Type(name,
                         token => tryParse(token, out TValue value) ? value : null);
         }
 
-        public Menu Build()
+        public Box Build()
         {
             Style style = BuildStyle();
             string help = BuildHelp(style);
-            return new Menu(help,
+            return new Box(help,
                             _rootNamespace,
                             style,
                             _types);

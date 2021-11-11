@@ -6,14 +6,14 @@ namespace Verbox.Models
     {
         private readonly IReadOnlyDictionary<string, object> _arguments;
 
-        internal Context(Menu source, 
+        internal Context(Box box, 
                         IReadOnlyDictionary<string, object> arguments)
         {
-            Source = source;
+            Box = box;
             _arguments = arguments;
         }
         
-        public Menu Source { get; }
+        public Box Box { get; }
 
         public object this[string name] => _arguments[name];
 

@@ -9,14 +9,15 @@ using Type = Verbox.Text.Type;
 namespace Verbox
 {
     using Typeset = IReadOnlyDictionary<string, Type>;
-    public sealed class Menu
+    
+    public sealed class Box
     {
         private readonly Models.Executables.Namespace _commands;
         private readonly Style _style;
         private readonly Splitter _splitter;
         private bool _isRunning;
 
-        internal Menu(string help,
+        internal Box(string help,
                       Namespace rootNamespace,
                       Style style,
                       Typeset typeset)

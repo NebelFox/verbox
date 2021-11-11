@@ -12,7 +12,7 @@ namespace Verbox.Models.Executables
             _help = help;
         }
 
-        public abstract void Execute(Menu source, string[] tokens);
+        public abstract void Execute(Box box, string[] tokens);
 
         public void Help()
         {
