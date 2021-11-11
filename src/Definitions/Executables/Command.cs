@@ -17,12 +17,12 @@ namespace Verbox
     {
         private Action<Context> _action;
         private SignatureDefinition _signature;
-        private readonly LinkedList<(string, string)> _examples;
+        private readonly LinkedList<string> _examples;
 
         public Command(string name, string brief) : base(name, brief)
         {
             _signature = new SignatureDefinition();
-            _examples = new LinkedList<(string, string)>();
+            _examples = new LinkedList<string>();
         }
 
         public Command WithDescription(string description)
@@ -38,9 +38,9 @@ namespace Verbox
             return this;
         }
 
-        public Command Example(string input, string explanation)
+        public Command Example(string example)
         {
-            _examples.AddLast((input, explanation));
+            _examples.AddLast(example);
             return this;
         }
 
@@ -54,14 +54,22 @@ namespace Verbox
         {
             return new Models.Executables.Command(BuildHelp(style), 
                                                   _action, 
-                                                  _signature.Build(style.Option, 
-                                                                   typeset,
+                                                  _signature.Build(typeset,
                                                                    new Tokenizer("'\"", style.Option.Prefix)));
         }
 
         internal override string BuildHelp(Style style)
         {
-            return $"{{Help placeholder of {Name} command}}";
+            var parts = new List<string>();
+            if (Description != null)
+                parts.Add($"{Description}\n");
+            parts.Add(_signature.BuildHelp());
+            if (_examples.Count != 0)
+            {
+                parts.Add("\nExamples:");
+                parts.AddRange(_examples);
+            }
+            return string.Join('\n', parts);
         }
     }
 }

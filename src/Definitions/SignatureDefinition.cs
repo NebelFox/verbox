@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using Verbox.Definitions.Parameters;
 using Verbox.Models;
 using Verbox.Models.Parameters;
-using Verbox.Models.Styles;
 using Verbox.Text;
 using Type = Verbox.Text.Type;
 
@@ -133,7 +132,7 @@ namespace Verbox.Definitions
                               defaultValue);
         }
 
-        internal Signature Build(OptionStyle style, Typeset typeset, Tokenizer tokenizer)
+        internal Signature Build(Typeset typeset, Tokenizer tokenizer)
         {
             return new Signature(_positionals.Select(p => BuildPositional(p, typeset)),
                                  _switches,
@@ -143,7 +142,10 @@ namespace Verbox.Definitions
 
         internal string BuildHelp()
         {
-            return string.Empty;
+            return string.Join('\n',
+                               string.Join(' ', _positionals.Select(p => p.Represent())),
+                               string.Join(' ', _switches.Select(name => $"--{name}")),
+                               string.Join(' ', _options.Select(o => o.Represent())));
         }
     }
 }
