@@ -9,25 +9,36 @@ namespace Verbox
 {
     using Typeset = IReadOnlyDictionary<string, Type>;
     
+    /// <summary>
+    /// Namespace definition - a collection of commands or other namespaces,
+    /// where each item may be referred via its name.
+    /// </summary>
     public class Namespace : ExecutableDefinition
     {
         private readonly LinkedList<ExecutableDefinition> _members;
 
-        internal Namespace() : this(string.Empty, string.Empty)
-        { }
-
-        // ReSharper disable once MemberCanBePrivate.Global
+        /// <summary>
+        /// Creates a new namespace definition
+        /// </summary>
+        /// <param name="name">namespace name</param>
+        /// <param name="brief">namespace short info</param>
         public Namespace(string name, string brief) : base(name, brief)
         {
             _members = new LinkedList<ExecutableDefinition>();
         }
 
+        /// <summary>
+        /// Adds description to the namespace.
+        /// </summary>
         public Namespace WithDescription(string description)
         {
             Description = description;
             return this;
         }
 
+        /// <summary>
+        /// Adds <see cref="Command"/> or another <see cref="Namespace"/> to the namespace.
+        /// </summary>
         public Namespace Member(ExecutableDefinition definition)
         {
             _members.AddLast(definition);

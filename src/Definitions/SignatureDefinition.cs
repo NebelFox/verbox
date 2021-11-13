@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using Verbox.Definitions.Parameters;
 using Verbox.Models;
 using Verbox.Models.Parameters;
-using Verbox.Text;
+using Verbox.Text.Tokens;
 using Type = Verbox.Text.Type;
 
 namespace Verbox.Definitions

@@ -12,24 +12,38 @@ namespace Verbox
 {
     using Typeset = IReadOnlyDictionary<string, Type>;
     
+    /// <summary>
+    /// Command definition
+    /// </summary>
     public class Command : ExecutableDefinition
     {
         private Action<Context> _action;
         private readonly SignatureDefinition _signature;
         private readonly List<string> _examples;
 
+        /// <summary>
+        /// Creates a new Command definition
+        /// </summary>
+        /// <param name="name">command name</param>
+        /// <param name="brief">short info about the command</param>
         public Command(string name, string brief) : base(name, brief)
         {
             _signature = new SignatureDefinition();
             _examples = new List<string>();
         }
 
+        /// <summary>
+        /// Adds description to the command
+        /// </summary>
         public Command WithDescription(string description)
         {
             Description = description;
             return this;
         }
 
+        /// <summary>
+        /// Parses each definition to parameter and adds to the command
+        /// </summary>
         public Command Parameters(params string[] definitions)
         {
             foreach (string definition in definitions)
@@ -43,6 +57,9 @@ namespace Verbox
             return this;
         }
 
+        /// <summary>
+        /// Sets the function to be invoked on command call
+        /// </summary>
         public Command Action(Action<Context> action)
         {
             _action = action;

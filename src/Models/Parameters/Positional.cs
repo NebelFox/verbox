@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Verbox.Text;
+using Verbox.Text.Tokens;
 using Type = Verbox.Text.Type;
 
 namespace Verbox.Models.Parameters

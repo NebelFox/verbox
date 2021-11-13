@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Verbox.Text;
+using Verbox.Text.Tokens;
 
 namespace Verbox.Models.Parameters
 {
