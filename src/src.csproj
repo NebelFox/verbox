@@ -6,4 +6,12 @@
         <AssemblyName>Verbox</AssemblyName>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\src.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\src.xml</DocumentationFile>
+    </PropertyGroup>
+
 </Project>
