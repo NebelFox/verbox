@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Verbox.Models.Styles;
 using Verbox.Text;
 using Type = Verbox.Text.Type;
 
@@ -12,46 +11,41 @@ namespace Verbox
     
     public sealed class Box
     {
-        private readonly Models.Executables.Namespace _commands;
+        private readonly Verbox.Models.Executables.Namespace _root;
         private readonly Style _style;
         private readonly Splitter _splitter;
         private bool _isRunning;
 
-        internal Box(string help,
-                      Namespace rootNamespace,
-                      Style style,
-                      Typeset typeset)
+        internal Box(Verbox.Models.Executables.Namespace root,
+                     Style style)
         {
             _style = style;
-            _commands = rootNamespace.Build(style, help, typeset);
-            _splitter = new Splitter(_style.Input.Separator, _style.Input.Quotes);
+            _root = root;
+            _splitter = new Splitter(_style.InputSeparator, _style.InputQuotes);
         }
 
         public void StartDialogue()
         {
             _isRunning = true;
-            Console.WriteLine(_style.Dialogue.Greeting);
-            Console.Write(_style.Dialogue.SemanticSeparator);
+            Console.WriteLine(_style.DialogueGreeting);
+            Console.Write(_style.DialogueSemanticSeparator);
             while (_isRunning)
                 Prompt();
 
-            Console.WriteLine(_style.Dialogue.Farewell);
+            Console.WriteLine(_style.DialogueFarewell);
         }
 
         public void Prompt()
         {
-            Console.Write(_style.Dialogue.PromptIndicator);
+            Console.Write(_style.DialoguePromptIndicator);
 
             var inputs = new LinkedList<string>();
             do
-            {
                 inputs.AddLast(Console.ReadLine());
-            }
-            // ReSharper disable once PossibleNullReferenceException
-            while (inputs.Last.Value.EndsWith(_style.Input.NewLineEscape));
+            while (inputs.Last.Value.EndsWith(_style.InputNewLineEscape));
 
-            var input = string.Join(_style.Input.Separator,
-                                    inputs.Select(i => i.TrimEnd(_style.Input.NewLineEscape)));
+            var input = string.Join(_style.InputSeparator,
+                                    inputs.Select(i => i.TrimEnd(_style.InputNewLineEscape)));
 
             try
             {
@@ -63,14 +57,14 @@ namespace Verbox
             }
             finally
             {
-                Console.Write(_style.Dialogue.SemanticSeparator);
+                Console.Write(_style.DialogueSemanticSeparator);
             }
         }
 
         public void Execute(string command)
         {
             string[] tokens = _splitter.Split(command).ToArray();
-            _commands.Execute(this, tokens);
+            _root.Execute(this, tokens);
         }
 
         public void Terminate()
@@ -80,7 +74,7 @@ namespace Verbox
 
         public void Help()
         {
-            _commands.Help();
+            _root.Help();
         }
     }
 }

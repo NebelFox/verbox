@@ -1,6 +1,6 @@
-﻿namespace Verbox.Text
+﻿namespace Verbox.Text.Tokens
 {
-    public record Token(string Value, TokenType Type)
+    internal record Token(string Value, TokenType Type)
     {
         public Token(TokenType type) : this(string.Empty, type)
         { }

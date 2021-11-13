@@ -4,8 +4,7 @@ using Verbox.Definitions;
 using Verbox.Definitions.Executables;
 using Verbox.Models;
 using Verbox.Models.Executables;
-using Verbox.Models.Styles;
-using Verbox.Text;
+using Verbox.Text.Tokens;
 using Type = Verbox.Text.Type;
 
 // ReSharper disable once CheckNamespace
@@ -16,13 +15,13 @@ namespace Verbox
     public class Command : ExecutableDefinition
     {
         private Action<Context> _action;
-        private SignatureDefinition _signature;
-        private readonly LinkedList<string> _examples;
+        private readonly SignatureDefinition _signature;
+        private readonly List<string> _examples;
 
         public Command(string name, string brief) : base(name, brief)
         {
             _signature = new SignatureDefinition();
-            _examples = new LinkedList<string>();
+            _examples = new List<string>();
         }
 
         public Command WithDescription(string description)
@@ -38,9 +37,9 @@ namespace Verbox
             return this;
         }
 
-        public Command Example(string example)
+        public Command Examples(params string[] examples)
         {
-            _examples.AddLast(example);
+            _examples.AddRange(examples);
             return this;
         }
 
@@ -55,7 +54,7 @@ namespace Verbox
             return new Models.Executables.Command(BuildHelp(style), 
                                                   _action, 
                                                   _signature.Build(typeset,
-                                                                   new Tokenizer("'\"", style.Option.Prefix)));
+                                                                   new Tokenizer("'\"", style.OptionPrefix)));
         }
 
         internal override string BuildHelp(Style style)

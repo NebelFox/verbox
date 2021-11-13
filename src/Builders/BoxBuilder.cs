@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Verbox.Definitions.Executables;
 using Verbox.Extensions;
-using Verbox.Models.Styles;
+using Verbox.Text;
 using Type = Verbox.Text.Type;
 
 // ReSharper disable once CheckNamespace
@@ -12,31 +12,16 @@ namespace Verbox
     {
         public delegate bool TryParse<TValue>(string name, out TValue value);
 
-        private const char Delimiter = '\n';
-        private string[] _greeting;
-        private string[] _farewell;
-        private string _title;
-        private string[] _header;
-        private string[] _footer;
-        private readonly Namespace _rootNamespace;
+        private readonly Namespace _root;
         private readonly Dictionary<string, Type> _types;
+        private Style _style;
 
         public BoxBuilder()
         {
-            _rootNamespace = new Namespace();
+            _root = new Namespace(null, null);
             _types = new Dictionary<string, Type>();
-        }
-
-        public BoxBuilder Greeting(string greeting)
-        {
-            _greeting = greeting.Split(Delimiter);
-            return this;
-        }
-
-        public BoxBuilder Title(string title)
-        {
-            _title = title;
-            return this;
+            Type("string", token => token);
+            _style = Verbox.Style.Default;
         }
 
         public BoxBuilder Header(string header)
@@ -47,13 +32,7 @@ namespace Verbox
 
         public BoxBuilder Command(ExecutableDefinition definition)
         {
-            _rootNamespace.Member(definition);
-            return this;
-        }
-
-        public BoxBuilder Footer(string footer)
-        {
-            _footer = footer.Split(Delimiter);
+            _root.Member(definition);
             return this;
         }
 
@@ -93,35 +72,20 @@ namespace Verbox
 
         public Box Build()
         {
-            Style style = BuildStyle();
-            string help = BuildHelp(style);
-            return new Box(help,
-                            _rootNamespace,
-                            style,
-                            _types);
+            return new Box(_root.Build(_style,
+                                       BuildHelp(),
+                                       _types),
+                           _style);
+        }
+        
+        private string BuildHelp()
+        {
+            return string.Join($"{_style.DialogueSemanticSeparator}\n",
+                               _style.HelpLobbyTitle,
+                               _style.HelpLobbyHeader,
+                               _root.BuildHelp(_style),
+                               _style.HelpLobbyFooter);
         }
 
-        private Style BuildStyle()
-        {
-            return new Style(
-                new DialogueStyle(string.Join('\n', _greeting),
-                                  string.Join('\n', _farewell),
-                                  "$ ",
-                                  "\n"),
-                new InputStyle(' ',
-                               "'\"",
-                               '\\'),
-                new OptionStyle("--"),
-                new HelpStyle("> {0} - {1}"));
-        }
-
-        private string BuildHelp(Style style)
-        {
-            return string.Join($"{style.Dialogue.SemanticSeparator}\n",
-                               _title,
-                               string.Join('\n', _header),
-                               _rootNamespace.BuildHelp(style),
-                               string.Join('\n', _footer));
-        }
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Verbox.Text
 {
-        public class Splitter
+    internal class Splitter
     {
         private enum State
         {
@@ -12,7 +12,7 @@ namespace Verbox.Text
             InSeparator,
             InWord
         }
-        
+
         private readonly char _separator;
         private readonly IReadOnlySet<char> _quotes;
 
@@ -22,9 +22,10 @@ namespace Verbox.Text
             _separator = separator;
             _quotes = new HashSet<char>(quotes);
         }
-        
+
         public Splitter(char separator = ' ',
-                        char quote = '"') : this(separator, quote.ToString()){}
+                        char quote = '"') : this(separator, quote.ToString())
+        { }
 
         public IEnumerable<string> Split(string text)
         {

@@ -12,7 +12,7 @@ namespace Verbox.Definitions
 {
     using Typeset = IReadOnlyDictionary<string, Type>;
 
-    public class SignatureDefinition
+    internal class SignatureDefinition
     {
         private static readonly Regex ParameterDefinitionRegex = new(
             @"^(?<option>--(?<names> [a-zA-Z0-9]+ (?: - [a-zA-Z0-9]+ ){0,2} )\s*)?

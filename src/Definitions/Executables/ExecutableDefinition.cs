@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Verbox.Models.Executables;
-using Verbox.Models.Styles;
 using Verbox.Text;
 
 namespace Verbox.Definitions.Executables
@@ -12,11 +11,6 @@ namespace Verbox.Definitions.Executables
         internal string Name { get; }
         internal string Brief { get; }
         internal string Description { get; set; }
-
-        private protected ExecutableDefinition(string name)
-        {
-            Name = name;
-        }
 
         private protected ExecutableDefinition(string name, string brief)
         {

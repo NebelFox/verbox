@@ -2,7 +2,6 @@
 using System.Linq;
 using Verbox.Definitions.Executables;
 using Verbox.Models.Executables;
-using Verbox.Models.Styles;
 using Verbox.Text;
 
 // ReSharper disable once CheckNamespace
@@ -52,12 +51,14 @@ namespace Verbox
         
         internal override string BuildHelp(Style style)
         {
-            return string.Join('\n', _members.Select(m => BuildMemberHelpRow(m, style)));
+            return string.Join(style.DialogueSemanticSeparator,
+                               Description,
+                               string.Join('\n', _members.Select(m => BuildMemberHelpRow(m, style))));
         }
 
         private static string BuildMemberHelpRow(ExecutableDefinition member, Style style)
         {
-            return string.Format(style.Help.NamespaceMemberFormat, 
+            return string.Format(style.HelpNamespaceMemberFormat, 
                                  member.Name, 
                                  member.Brief);
         }

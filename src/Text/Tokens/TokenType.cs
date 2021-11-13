@@ -1,6 +1,6 @@
-﻿namespace Verbox.Text
+﻿namespace Verbox.Text.Tokens
 {
-    public enum TokenType
+    internal enum TokenType
     {
         Word,
         Quoted,

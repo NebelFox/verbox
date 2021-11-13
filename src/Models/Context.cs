@@ -16,7 +16,5 @@ namespace Verbox.Models
         public Box Box { get; }
 
         public object this[string name] => _arguments[name];
-
-        public object this[char name] => this[name.ToString()];
     }
 }

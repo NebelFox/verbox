@@ -1,9 +1,9 @@
 ﻿namespace Verbox.Text
 {
-    public class Type
+    public delegate object ParseFunction(string token);
+    
+    internal class Type
     {
-        public delegate object ParseFunction(string token);
-
         private readonly ParseFunction _parse;
 
         public Type(string name, ParseFunction parse)

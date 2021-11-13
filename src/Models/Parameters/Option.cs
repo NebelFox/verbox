@@ -3,7 +3,7 @@ using Verbox.Text;
 
 namespace Verbox.Models.Parameters
 {
-    public record Option(string Name,
+    internal record Option(string Name,
                          Positional Parameter,
                          object Default)
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Verbox.Models.Parameters;
-using Verbox.Text;
+using Verbox.Text.Tokens;
 
 namespace Verbox.Models
 {

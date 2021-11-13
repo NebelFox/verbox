@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Verbox.Text
+namespace Verbox.Text.Tokens
 {
-    public class Tokenizer
+    internal class Tokenizer
     {
         private readonly IReadOnlySet<char> _quotes;
         private readonly string _optionPrefix;
