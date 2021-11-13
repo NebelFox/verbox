@@ -1,5 +1,9 @@
 ﻿namespace Verbox.Text
 {
+    /// <summary>
+    /// Parses a string to an <see cref="object"/>
+    /// </summary>
+    /// <returns>resulting object on success or null on failure</returns>
     public delegate object ParseFunction(string token);
     
     internal class Type
