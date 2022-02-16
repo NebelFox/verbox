@@ -4,8 +4,8 @@ using Verbox.Text.Tokens;
 namespace Verbox.Models.Parameters
 {
     internal record Option(string Name,
-                         Positional Parameter,
-                         object Default)
+                           Positional Parameter,
+                           object Default)
     {
         public object Parse(IReadOnlyList<Token> tokens,
                             ref int current)

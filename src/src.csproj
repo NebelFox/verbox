@@ -4,14 +4,20 @@
         <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>Verbox</RootNamespace>
         <AssemblyName>Verbox</AssemblyName>
+        <Title>Verbox</Title>
+        <Authors>NebelFox</Authors>
+        <Description>A library for creating advanced CLIs</Description>
+        <PackageId>NebelFox.Verbox</PackageId>
+        <PackageTags>CLI</PackageTags>
+        <PackageVersion>1.0.1</PackageVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <DocumentationFile>bin\Debug\src.xml</DocumentationFile>
+      <DocumentationFile>bin\Debug\Verbox.xml</DocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <DocumentationFile>bin\Release\src.xml</DocumentationFile>
+      <DocumentationFile>bin\Release\Verbox.xml</DocumentationFile>
     </PropertyGroup>
 
 </Project>

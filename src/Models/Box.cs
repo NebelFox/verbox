@@ -25,7 +25,7 @@ namespace Verbox
         {
             _style = style;
             _root = root;
-            _splitter = new Splitter(_style.InputSeparator, _style.InputQuotes);
+            _splitter = new Splitter(_style["input.separator"][0], _style["input.quotes"]);
         }
 
         /// <summary>
@@ -33,15 +33,20 @@ namespace Verbox
         /// Continues to prompt and execute input until terminated
         /// and finally prints the dialogue farewell.
         /// </summary>
-        public void StartDialogue()
+        public void StartDialogue(bool showHelp = true)
         {
             _isRunning = true;
-            Console.WriteLine(_style.DialogueGreeting);
-            Console.Write(_style.DialogueSemanticSeparator);
+            Greet();
+            Separate();
+            if (showHelp)
+            {
+                Help();
+                Separate();
+            }
             while (_isRunning)
                 Prompt();
 
-            Console.WriteLine(_style.DialogueFarewell);
+            Farewell();
         }
 
         /// <summary>
@@ -51,27 +56,27 @@ namespace Verbox
         /// </summary>
         public void Prompt()
         {
-            Console.Write(_style.DialoguePromptIndicator);
+            Console.Write(_style["dialogue.prompt-indicator"]);
 
             var inputs = new LinkedList<string>();
             do
                 inputs.AddLast(Console.ReadLine());
-            while (inputs.Last.Value.EndsWith(_style.InputNewLineEscape));
+            while (inputs.Last.Value.EndsWith(_style["input.new-line-escape"]));
 
-            var input = string.Join(_style.InputSeparator,
-                                    inputs.Select(i => i.TrimEnd(_style.InputNewLineEscape)));
+            var input = string.Join(_style["input.separator"],
+                                    inputs.Select(i => i.TrimEnd(_style["input.new-line-escape"][0])));
 
             try
             {
                 Execute(input);
             }
-            catch (ArgumentException e)
+            catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
             }
             finally
             {
-                Console.Write(_style.DialogueSemanticSeparator);
+                Separate();
             }
         }
 
@@ -99,6 +104,21 @@ namespace Verbox
         public void Help()
         {
             _root.Help();
+        }
+
+        private void Greet()
+        {
+            Console.Write(_style["dialogue.greeting"]);
+        }
+
+        private void Separate()
+        {
+            Console.Write(_style["dialogue.semantic-separator"]);
+        }
+
+        private void Farewell()
+        {
+            Console.Write(_style["dialogue.farewell"]);
         }
     }
 }

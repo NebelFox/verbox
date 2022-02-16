@@ -16,7 +16,7 @@ namespace Verbox.Models.Executables
 
         public void Help()
         {
-            Console.WriteLine(_help);
+            Console.Write(_help);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Verbox.Models
+namespace Verbox
 {
     /// <summary>
     /// Is used to parametrize the command action calls
@@ -24,7 +24,13 @@ namespace Verbox.Models
         /// <summary>
         /// Value of a specific argument, got from the call input
         /// </summary>
-        /// <param name="name">name of the parameter</param>
+        /// <param name="name">name of the command parameter</param>
         public object this[string name] => _arguments[name];
+
+        /// <summary>
+        /// String value of a specific argument
+        /// </summary>
+        /// <param name="name">name of the command parameter</param>
+        public string Get(string name) => _arguments[name].ToString();
     }
 }

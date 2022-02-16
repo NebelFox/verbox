@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Verbox.Models.Executables;
-using Verbox.Text;
+using Type = Verbox.Text.Type;
 
 namespace Verbox.Definitions.Executables
 {
@@ -15,7 +16,8 @@ namespace Verbox.Definitions.Executables
         internal string Brief { get; }
         internal string Description { get; set; }
 
-        private protected ExecutableDefinition(string name, string brief)
+        private protected ExecutableDefinition(string name, 
+                                               string brief)
         {
             Name = name;
             Brief = brief;
@@ -23,6 +25,12 @@ namespace Verbox.Definitions.Executables
 
         internal abstract string BuildHelp(Style style);
 
+        internal abstract ExecutableDefinition Get(string[] path);
+
+        internal abstract void SetMissingActions(Action<Context> action);
+
         internal abstract Executable Build(Style style, Typeset typeset);
+
+        internal abstract ExecutableDefinition Copy();
     }
 }
