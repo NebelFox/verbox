@@ -6,12 +6,12 @@ using Type = Verbox.Text.Type;
 namespace Verbox.Models.Parameters
 {
     internal record Positional(string Name,
-                             Type Type,
-                             int MinValuesCount,
-                             int MaxValuesCount)
+                               Type Type,
+                               int MinValuesCount,
+                               int MaxValuesCount)
     {
         public bool IsMandatory => MinValuesCount > 0;
-        
+
         public object Parse(IReadOnlyList<Token> tokens,
                             ref int current)
         {
@@ -21,20 +21,22 @@ namespace Verbox.Models.Parameters
                 && tokens[current].IsValue
                 && values.Count < MaxValuesCount)
             {
-                string argument = tokens[current].Value; 
-                if(Type.TryParse(argument, out object value))
+                string argument = tokens[current].Value;
+                if (Type.TryParse(argument, out object value))
                 {
                     values.Add(value);
                     ++current;
                 }
                 else
                 {
-                    throw new ArgumentException($"Type <{Type.Name}> of positional parameter <{Name}> mismatched the {current+1}th argument ({argument})");
+                    throw new ArgumentException(
+                        $"Type <{Type.Name}> of positional parameter <{Name}> mismatched the {current + 1}th argument ({argument})");
                 }
             }
 
             if (values.Count < MinValuesCount)
-                throw new ArgumentException($"Parameter \"{Name}\" expected at least {MinValuesCount} value, but actually got {values.Count}");
+                throw new ArgumentException(
+                    $"Parameter \"{Name}\" expected at least {MinValuesCount} value, but actually got {values.Count}");
 
             if (MaxValuesCount > 1)
                 return values.ToArray();
@@ -45,5 +47,7 @@ namespace Verbox.Models.Parameters
                 _ => values.ToArray()
             };
         }
+
+        public object Default => MaxValuesCount > 1 ? Array.Empty<object>() : null;
     }
 }

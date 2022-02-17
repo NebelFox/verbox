@@ -19,7 +19,7 @@ private static void Main(string[] args)
        .Type<Age>() // creating a new type from enum (name is "age")
        .Type<Age>("also-age") // creating a new type from enum with custom type name
        .Command(new Command("print", "Print all the values")
-               .Parameters("<values...>") // single collective string argument
+               .Parameters("values...") // single collective string argument
                .Action(context =>
                 {
                     // accessing the argument value
@@ -34,16 +34,16 @@ private static void Main(string[] args)
        .Command(new Namespace("namespace", "namespace brief")
                .WithDescription("description")
                .Member(new Command("variants", "some parameters variants")
-                      .Parameters("<positional-string>",
-                                  "<positional-collective...>",
-                                  "<positional-typed:bool>",
-                                  "<positional-typed-collective:bool...>",
-                                  "[<optional-positional>]",
-                                  "[<optional-positional-typed-collective:bool...>]",
+                      .Parameters("positional-string",
+                                  "positional-collective...",
+                                  "positional-typed:bool",
+                                  "positional-typed-collective:bool...",
+                                  "[optional-positional]",
+                                  "[optional-positional-typed-collective:bool...]",
                                   "--switch",
-                                  "--option <parameter-collective...>",
-                                  "--option <parameter>=default",
-                                  "--option <flag:bool>=true")
+                                  "--option parameter-collective...",
+                                  "--option parameter=default",
+                                  "--option flag:bool=true")
                       .Action(_ => { })))
        .Style(Style.Default with // so this custom style inherits from the default
         {

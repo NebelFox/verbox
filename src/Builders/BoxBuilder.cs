@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Verbox.Definitions.Executables;
 using Verbox.Extensions;
 using Verbox.Text;
@@ -22,8 +23,8 @@ namespace Verbox
         /// <returns>parsing success</returns>
         public delegate bool TryParse<TValue>(string token, out TValue value);
 
-        private readonly Namespace _root;
-        private readonly Dictionary<string, Type> _types;
+        private Namespace _root;
+        private readonly List<Type> _types;
         private Style _style;
 
         /// <summary>
@@ -32,29 +33,48 @@ namespace Verbox
         public BoxBuilder()
         {
             _root = new Namespace(null, null);
-            _types = new Dictionary<string, Type>();
+            _types = new List<Type>();
             Type("string", token => token);
             _style = Verbox.Style.Default;
         }
 
         /// <summary>
-        /// Adds a new command/namespace to the box root namespace
+        /// Adds an executable near an already added one with target name.
+        /// Adds either before or after the specified executable.
         /// </summary>
-        public BoxBuilder Command(ExecutableDefinition definition)
+        /// <param name="definition">An executable to add</param>
+        /// <param name="targetExecutableName">Name of an executable to add near</param>
+        /// <param name="before">Adds before the specified executable, of true; Otherwise, after it.</param>
+        /// <returns></returns>
+        public BoxBuilder CommandNear(ExecutableDefinition definition,
+                                      string targetExecutableName,
+                                      bool before = false)
         {
-            _root.Member(definition);
+            _root.InsertCommandNear(definition, targetExecutableName, before);
             return this;
         }
 
+        /// <summary>
+        /// Adds a command/namespace to the box root namespace
+        /// </summary>
+        /// <param name="definition">an executable definition to add</param>
+        /// <param name="prepend">if true - inserts at the beginning,
+        /// otherwise at the back</param>
+        public BoxBuilder Command(ExecutableDefinition definition,
+                                  bool prepend = false)
+        {
+            _root.Command(definition, prepend);
+            return this;
+        }
 
         /// <summary>
-        /// Adds a new recognizable value type to  box
+        /// Adds a new recognizable value type to the box
         /// </summary>
         /// <param name="name">type name</param>
-        /// <param name="parse">function for parsing to the type from string</param
+        /// <param name="parse">function for parsing to the type from string</param>
         public BoxBuilder Type(string name, ParseFunction parse)
         {
-            _types.Add(name, new Type(name, parse));
+            _types.Add(new Type(name, parse));
             return this;
         }
 
@@ -96,12 +116,74 @@ namespace Verbox
         }
 
         /// <summary>
-        /// Sets the style the box is built with
+        /// Sets the box style
         /// </summary>
+        /// <param name="style">Style to use</param>
         public BoxBuilder Style(Style style)
         {
             _style = style;
             return this;
+        }
+
+        /// <summary>
+        /// Creates a new style from the given aspects
+        /// and sets it to the box
+        /// </summary>
+        /// <param name="aspects">what ot create a new style with</param>
+        public BoxBuilder Style(IReadOnlyDictionary<string, string> aspects)
+        {
+            return Style(new Style(aspects));
+        }
+
+        /// <summary>
+        /// Returns <see cref="ExecutableDefinition"/> by the requested path
+        /// </summary>
+        /// <param name="path">path to executable</param>
+        /// <returns><see cref="ExecutableDefinition"/></returns>
+        /// <exception cref="ArgumentException">if such path doesn't exist</exception>
+        public ExecutableDefinition GetByPath(string path)
+        {
+            string[] parts = path.Split(_style["input.separator"]);
+            ExecutableDefinition definition = _root.Get(parts);
+            return definition
+                ?? throw new ArgumentException($"Invalid executable path: {path}",
+                                               nameof(path));
+        }
+
+        /// <summary>
+        /// For each dictionary pair gets it's target command by specified path
+        /// and appoints action in pair to it
+        /// </summary>
+        /// <param name="actions">Dictionary of pairs "path:action"</param>
+        /// <exception cref="InvalidOperationException">The executable by a path is not a command</exception>
+        /// <exception cref="ArgumentException">A path doesn't exist</exception>>
+        public void SetActionsByPaths(IReadOnlyDictionary<string, Action<Context>> actions)
+        {
+            foreach ((string path, Action<Context> action) in actions)
+            {
+                if (GetByPath(path) is not Command command)
+                    throw new InvalidOperationException($"Executable at \"{path}\" must be a command, not a namespace");
+                command.Action(action);
+            }
+        }
+
+        /// <summary>
+        /// For each command that has no action set yet,
+        /// sets the given function as action
+        /// </summary>
+        /// <param name="action">a function to set to all commands without action</param>
+        public void SetMissingActions(Action<Context> action)
+        {
+            _root.SetMissingActions(action);
+        }
+
+        /// <summary>
+        /// For each command without any action already set,
+        /// sets the action to a function that does nothing
+        /// </summary>
+        public void SetMissingActionsToDummy()
+        {
+            _root.SetMissingActions(_ => { });
         }
 
         /// <summary>
@@ -113,18 +195,37 @@ namespace Verbox
         {
             return new Box(_root.Build(_style,
                                        BuildHelp(),
-                                       _types),
+                                       BuildTypeset()),
                            _style);
         }
-        
+
         private string BuildHelp()
         {
-            return string.Join($"{_style.DialogueSemanticSeparator}\n",
-                               _style.HelpLobbyTitle,
-                               _style.HelpLobbyHeader,
+            return _style["dialogue.semantic-separator"]
+               .JoinMeaningful(_style["help.lobby.title"],
+                               _style["help.lobby.header"],
                                _root.BuildHelp(_style),
-                               _style.HelpLobbyFooter);
+                               _style["help.lobby.footer"]);
         }
 
+        private IReadOnlyDictionary<string, Type> BuildTypeset()
+        {
+            return new Dictionary<string, Type>(_types.Select(t => new KeyValuePair<string, Type>(t.Name, t)));
+        }
+
+        /// <summary>
+        /// Creates a deep copy of this <see cref="BoxBuilder"/> instance
+        /// </summary>
+        /// <returns>An independent copy of this <see cref="BoxBuilder"/></returns>
+        public BoxBuilder Copy()
+        {
+            var copy = new BoxBuilder
+            {
+                _root = _root.Copy(),
+                _style = _style
+            };
+            copy._types.AddRange(_types);
+            return copy;
+        }
     }
 }

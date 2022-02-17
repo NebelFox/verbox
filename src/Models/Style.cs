@@ -1,59 +1,102 @@
-﻿// ReSharper disable once CheckNamespace
+﻿using System;
+using System.Collections.Generic;
+
 namespace Verbox
 {
     /// <summary>
-    /// Defines style of mostly visual aspects of the box it's applied to
+    /// Defines style of some visual aspects of the box it's applied to
     /// </summary>
-    /// <param name="DialogueGreeting">Dialogue start message</param>
-    /// <param name="DialogueFarewell">Dialogue end message</param>
-    /// <param name="DialoguePromptIndicator">The start of the prompt line</param>
-    /// <param name="DialogueSemanticSeparator">Separates messages and text blocks</param>
-    /// <param name="InputSeparator">Is treated as the tokens separator in input</param>
-    /// <param name="InputQuotes">Each character from this string may be used
-    /// for quoted escape</param>
-    /// <param name="InputNewLineEscape">Placing it at the end of an input
-    /// allows to continue the input at the next line </param>
-    /// <param name="OptionPrefix">Token starting with this string is treated as an option</param>
-    /// <param name="HelpLobbyTitle">Text at the very top of the box root help message.
-    /// Is meant to contain the program/box brief</param>
-    /// <param name="HelpLobbyHeader">Text above commands list in the box root help message</param>
-    /// <param name="HelpLobbyFooter">Text below commands list in the box root help message</param>
-    /// <param name="HelpNamespaceMemberFormat">String template with 2 placeholders -
-    /// for command/namespace name and brief respectively</param>
-    public record Style(string DialogueGreeting,
-                        string DialogueFarewell,
-                        string DialoguePromptIndicator,
-                        string DialogueSemanticSeparator,
-                        char InputSeparator,
-                        string InputQuotes,
-                        char InputNewLineEscape,
-                        string OptionPrefix,
-                        string HelpLobbyTitle,
-                        string HelpLobbyHeader,
-                        string HelpLobbyFooter,
-                        string HelpNamespaceMemberFormat)
+    public class Style
     {
-        private static Style s_Default;
-        
         /// <summary>
-        /// Default style. Is meant to be used as "Style.Default with {...}"
+        /// Default style to be used if none specified.
+        /// Also is a default base style for custom styles without one.
         /// </summary>
-        public static Style Default => s_Default ??= CreateDefaultStyle();
+        public static readonly Style Default = new(new Dictionary<string, string>
+                                                   {
+                                                       ["dialogue.greeting"] = null,
+                                                       ["dialogue.prompt-indicator"] = "$ ",
+                                                       ["dialogue.semantic-separator"] = "\n",
+                                                       ["dialogue.farewell"] = null,
+                                                       ["input.separator"] = " ",
+                                                       ["input.quotes"] = "'\"`",
+                                                       ["input.new-line-escape"] = "\\",
+                                                       ["help.lobby.title"] = null,
+                                                       ["help.lobby.header"] = null,
+                                                       ["help.lobby.footer"] = null,
+                                                       ["help.namespace-member-format"] = "> {0} - {1}",
+                                                       ["option.prefix"] = "--",
+                                                   },
+                                                   null);
 
-        private static Style CreateDefaultStyle()
+        private readonly IReadOnlyDictionary<string, string> _aspects;
+        private readonly Style _base;
+
+        /// <summary>
+        /// Constructs a new style from a dictionary.
+        /// <see cref="Default"/> is used as the base style
+        /// </summary>
+        /// <param name="aspects">a dictionary of style aspects</param>
+        public Style(IReadOnlyDictionary<string, string> aspects)
+            : this(aspects, Default)
+        { }
+
+        /// <summary>
+        /// Constructs a new style from a dictionary.
+        /// </summary>
+        /// <param name="aspects">a dictionary of style aspects</param>
+        /// <param name="base">A base style to get omitted aspects from</param>
+        /// <exception cref="ArgumentException">If any name of given aspects is not recognized</exception>
+        public Style(IReadOnlyDictionary<string, string> aspects,
+                     Style @base)
         {
-            return new Style("Welcome",
-                             "Exiting the program...",
-                             "$ ",
-                             "\n\n",
-                             ' ',
-                             "'`\"",
-                             '\\',
-                             "--",
-                             null,
-                             null,
-                             "> {0} - {1}",
-                             null);
+            if (Default != null)
+            {
+                foreach (string key in aspects.Keys)
+                {
+                    if (Default._aspects.ContainsKey(key) == false)
+                        throw new ArgumentException($"Unknown key: \"{key}\"");
+                }
+            }
+            _aspects = aspects;
+            _base = @base;
+        }
+
+        /// <summary>
+        /// Gets the value of requested aspect.
+        /// Tries to get it from the base style if missing
+        /// </summary>
+        /// <param name="key">Name of aspect</param>
+        public string this[string key] => Get(key);
+
+        private string Get(string key)
+        {
+            return _aspects.TryGetValue(key, out string value)
+                ? value
+                : _base != null
+                    ? _base.Get(key)
+                    : throw new ArgumentException($"Unknown aspect key: \"{key}\"");
+        }
+
+        /// <summary>
+        /// Creates a copy of this instance but with different base style.
+        /// So all its own aspects are saved,
+        /// but all the rest would be seeked for in the new base style
+        /// </summary>
+        /// <param name="base">A new base style</param>
+        /// <returns>Rebased copy</returns>
+        public Style Rebase(Style @base)
+        {
+            return new Style(_aspects, @base);
+        }
+
+        /// <summary>
+        /// Creates a new style with the same aspects and base style
+        /// </summary>
+        /// <returns>An identical to this instance style</returns>
+        public Style Copy()
+        {
+            return new Style(_aspects, _base);
         }
     }
 }

@@ -2,14 +2,17 @@
 
 You can set the style for a box via `BoxBuilder.Style` method, 
 that accepts a `Style` instance.  
-As the `Style` is a `record`, defining a custom style 
-is recommended via `with` on the default style 
-for inheritance purposes, as shown in the example below:
+Alternatively, a IReadOnlyDictionary could be used as the argument.
+It's just for a convenience, 
+as it creates a style instance from the given dictionary.
 ```c#
 new BoxBuilder()
     /*...*/
-   .Style(Style.Default with {DailogueGreeting = "Hi there!", 
-                              DialogueFarewell = "See you soon!"})
+   .Style(new Dictionary<string, string>
+    {
+        ["dialogue.greeting"] = "Hi there!",
+        ["dialogue.farewell"] = "See you soon!"
+    })
    .Build()
    .StartDialogue();
 ```

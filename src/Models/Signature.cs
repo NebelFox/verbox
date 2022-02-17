@@ -71,6 +71,8 @@ namespace Verbox.Models
 
         private void SetOmittedOptionsToDefaults(Dictionary<string, object> arguments)
         {
+            foreach (Positional positional in _positionals)
+                arguments.TryAdd(positional.Name, positional.Default);
             foreach (Option option in _options.Values)
                 arguments.TryAdd(option.Name, option.Default);
             foreach (string name in _switches)
