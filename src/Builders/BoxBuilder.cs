@@ -126,6 +126,16 @@ namespace Verbox
         }
 
         /// <summary>
+        /// Creates a new style from the given aspects
+        /// and sets it to the box
+        /// </summary>
+        /// <param name="aspects">what ot create a new style with</param>
+        public BoxBuilder Style(IReadOnlyDictionary<string, string> aspects)
+        {
+            return Style(new Style(aspects));
+        }
+
+        /// <summary>
         /// Returns <see cref="ExecutableDefinition"/> by the requested path
         /// </summary>
         /// <param name="path">path to executable</param>
@@ -193,9 +203,9 @@ namespace Verbox
         {
             return _style["dialogue.semantic-separator"]
                .JoinMeaningful(_style["help.lobby.title"],
-                             _style["help.lobby.header"],
-                             _root.BuildHelp(_style),
-                             _style["help.lobby.footer"]);
+                               _style["help.lobby.header"],
+                               _root.BuildHelp(_style),
+                               _style["help.lobby.footer"]);
         }
 
         private IReadOnlyDictionary<string, Type> BuildTypeset()

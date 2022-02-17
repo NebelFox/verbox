@@ -19,9 +19,9 @@ namespace Verbox.Definitions
             @"^(?<option>--(?<names> [a-zA-Z0-9]+ (?: - [a-zA-Z0-9]+ ){0,2} )\s*)?
                     (?<positional>
                         (?:(?<optional>\[)|(?<!\[) )
-                        (?: < (?<name> [a-zA-Z0-9]+ (?: - [a-zA-Z0-9]+ ){0,2} )
+                        (?: (?<chevrons><)? (?<name> [a-zA-Z0-9]+ (?: - [a-zA-Z0-9]+ ){0,2} )
                             (?: \: (?<type> [a-zA-Z0-9]+ (?: - [a-zA-Z0-9]+ ){0,2} ) )?
-                            (?<collective> \.{3} )? > )
+                            (?<collective> \.{3} )? (?(chevrons)>|) )
                         (?(optional) (\])|(?!\]) ))?
                     (?(option)(\s*=\s*(?<default>\S+))?|)$",
             RegexOptions.IgnorePatternWhitespace);

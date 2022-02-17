@@ -25,7 +25,7 @@ namespace Verbox
         /// </summary>
         /// <param name="name">command name</param>
         /// <param name="brief">short info about the command</param>
-        public Command(string name, string brief) : base(name, brief)
+        public Command(string name, string brief=null) : base(name, brief)
         {
             _signature = new SignatureDefinition();
             _examples = new List<string>();

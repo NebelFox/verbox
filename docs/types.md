@@ -5,7 +5,7 @@
 new BoxBuilder()
    .Type<int>("int", int.TryParse)
    .Command(new Command("plus-one", "...")
-           .Parameters("<value:int>")
+           .Parameters("value:int")
            .Action(context => 
            {
                var value = (int)context["value"];
@@ -23,8 +23,8 @@ new BoxBuilder()
 new BoxBuilder()
    .Type<int>("int", int.TryParse)
    .Command(new Command("demo", "...")
-           .Parameters("<values:int...>",
-                       "<tail>")
+           .Parameters("values:int...",
+                       "tail")
            .Action(context => 
            {
                var values = string.Join(',', (object[])context["values"]);
@@ -37,7 +37,8 @@ new BoxBuilder()
 >**Note**. It won't work like that if the collective/optional 
 > string parameter is preceding another parameters. As the `string` type matches everything, 
 > it would capture everything until the input end or an option.
-> For the example above let's swap parameter types like that: `.Parameters("<values...>", "[<tail:int>]")`
+> For the example above let's swap parameter types like that: 
+> `.Parameters("values...", "[tail:int]")`
 > (The second parameter is made optional to avoid error).  
 > Then the first execute call would output "Values: 1, tail; Tail: "
 > And the second - "Values: 1, 2, 3, tail; Tail: "

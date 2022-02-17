@@ -24,7 +24,7 @@ namespace Verbox
         /// </summary>
         /// <param name="name">namespace name</param>
         /// <param name="brief">namespace short info</param>
-        public Namespace(string name, string brief) : base(name, brief)
+        public Namespace(string name, string brief=null) : base(name, brief)
         {
             _executables = new List<ExecutableDefinition>();
         }

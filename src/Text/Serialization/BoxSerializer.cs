@@ -53,9 +53,9 @@ namespace Verbox.Text.Serialization
         /// <param name="element">A JSON object of properties like "box-name: {...box-specification...}"</param>
         public void DeserializeMany(JsonElement element)
         {
-            foreach (JsonProperty style in element.AssertValueKind("element", JsonValueKind.Object)
+            foreach (JsonProperty box in element.AssertValueKind("boxes", JsonValueKind.Object)
                                                   .EnumerateObject())
-                Deserialize(style);
+                Deserialize(box);
         }
 
         /// <summary>
@@ -195,17 +195,6 @@ namespace Verbox.Text.Serialization
             };
         }
 
-        private static BoxExtender AppendCommands(JsonElement commands)
-        {
-            BoxExtender extender = null;
-            foreach (JsonElement command in commands.EnumerateArray())
-            {
-                ExecutableDefinition definition = DeserializeExecutable(command);
-                extender += builder => builder.Command(definition);
-            }
-            return extender;
-        }
-
         private static ExecutableDefinition[] DeserializeExecutables(JsonElement definitionsArray)
         {
             return definitionsArray.AssertValueKind("array of executable definitions", JsonValueKind.Array)
@@ -217,7 +206,7 @@ namespace Verbox.Text.Serialization
         private static ExecutableDefinition DeserializeExecutable(JsonElement definition)
         {
             if (definition.ValueKind == JsonValueKind.String)
-                return new Command(definition.GetString(), null);
+                return new Command(definition.GetString());
 
             string name = definition.GetPropertyString("name", "definition");
             string brief = definition.GetOptionalPropertyString("brief");
