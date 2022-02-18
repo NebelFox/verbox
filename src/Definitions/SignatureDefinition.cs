@@ -116,11 +116,20 @@ namespace Verbox.Definitions
         private static Option BuildOption(OptionDefinition definition, Typeset typeset)
         {
             object defaultValue = definition.Default != null
-                ? typeset[definition.Parameter.Type].Parse(definition.Default)
+                ? ParseDefaultValue(definition, typeset)
                 : null;
             return new Option(definition.Name,
                               BuildPositional(definition.Parameter, typeset),
                               defaultValue);
+        }
+
+        private static object ParseDefaultValue(OptionDefinition definition, 
+                                                Typeset typeset)
+        {
+            object value = typeset[definition.Parameter.Type].Parse(definition.Default);
+            return MaxValuesCount(definition.Parameter.Tags) > 1
+                ? new[] { value }
+                : value;
         }
 
         internal Signature Build(Typeset typeset, Tokenizer tokenizer)

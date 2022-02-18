@@ -54,7 +54,7 @@ namespace Verbox.Text.Serialization
         public void DeserializeMany(JsonElement element)
         {
             foreach (JsonProperty box in element.AssertValueKind("boxes", JsonValueKind.Object)
-                                                  .EnumerateObject())
+                                                .EnumerateObject())
                 Deserialize(box);
         }
 
@@ -180,7 +180,7 @@ namespace Verbox.Text.Serialization
                     foreach (ExecutableDefinition definition in definitions)
                         builder.Command(definition);
                 },
-                _ => throw new ArgumentException("The position must be either \"begin\" or \"end\"")
+                _ => throw new ArgumentException("The \"at\" value must be either \"begin\" or \"end\"")
             };
         }
 
@@ -210,7 +210,7 @@ namespace Verbox.Text.Serialization
 
             string name = definition.GetPropertyString("name", "definition");
             string brief = definition.GetOptionalPropertyString("brief");
-            string description = definition.GetOptionalPropertyString("description");
+            string description = GetDescription(definition);
 
             if (definition.TryGetProperty("commands", out JsonElement commands))
             {
@@ -243,6 +243,40 @@ namespace Verbox.Text.Serialization
                 command.Examples(examples.EnumerateArray().Select(p => p.GetString()).ToArray());
 
             return command;
+        }
+
+        private static string GetDescription(JsonElement element)
+        {
+            return element.TryGetProperty("description",
+                                          out JsonElement descriptionElement)
+                ? DeserializeDescription(descriptionElement)
+                : null;
+        }
+
+        private static string DeserializeDescription(JsonElement description)
+        {
+            description.AssertValueKind("description",
+                                        JsonValueKind.String,
+                                        JsonValueKind.Array);
+            return description.ValueKind == JsonValueKind.String
+                ? description.GetString()
+                : DeserializeMultilineDescription(description);
+        }
+
+        private static string DeserializeMultilineDescription(JsonElement description)
+        {
+            return string.Join('\n', EnumerateStringsArray(description));
+        }
+
+        private static IEnumerable<string> EnumerateStringsArray(JsonElement array)
+        {
+            return array.EnumerateArray()
+                        .Select(MakeStringSelector("description line"));
+        }
+
+        private static Func<JsonElement, string> MakeStringSelector(string name)
+        {
+            return element => element.AssertValueKind(name, JsonValueKind.String).GetString();
         }
 
         private static string GetBoxBase(JsonElement element)

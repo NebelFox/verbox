@@ -6,7 +6,7 @@
     {
         public override string ToString()
         {
-            return $"<{Prefix}{Name}{RepresentType()}{RepresentCollective()}{Postfix}>";
+            return $"{Prefix}{Name}{RepresentType()}{RepresentCollective()}{Postfix}";
         }
 
         private string Prefix => Tags.HasFlag(ArgTags.Optional) ? "[" : string.Empty;
