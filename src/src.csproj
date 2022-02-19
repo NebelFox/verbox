@@ -9,7 +9,7 @@
         <Description>A framework for creating advanced CLIs</Description>
         <PackageId>NebelFox.Verbox</PackageId>
         <PackageTags>CLI</PackageTags>
-        <PackageVersion>1.0.1</PackageVersion>
+        <PackageVersion>1.0.2</PackageVersion>
         <RepositoryUrl>https://github.com/NebelFox/verbox</RepositoryUrl>
     </PropertyGroup>
 
