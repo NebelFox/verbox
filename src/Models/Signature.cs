@@ -50,7 +50,6 @@ namespace Verbox.Models
                         arguments[name] = option.Parse(tokens, ref current);
                     else
                         throw new ArgumentException($"Unknown option: \"{name}\"");
-                    
                 }
                 else
                 {

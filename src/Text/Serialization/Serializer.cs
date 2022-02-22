@@ -44,9 +44,9 @@ namespace Verbox.Text.Serialization
         public void Deserialize(JsonElement element)
         {
             element.AssertValueKind("root", JsonValueKind.Object);
-            if(element.TryGetProperty("styles", out JsonElement styles))
+            if (element.TryGetProperty("styles", out JsonElement styles))
                 Styles.DeserializeMany(styles);
-            if(element.TryGetProperty("boxes", out JsonElement boxes))
+            if (element.TryGetProperty("boxes", out JsonElement boxes))
                 Boxes.DeserializeMany(boxes);
         }
     }

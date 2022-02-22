@@ -67,14 +67,14 @@ namespace Verbox.Extensions
         }
 
         public static string JoinMeaningful(this string separator,
-                                          params object[] values)
+                                            params object[] values)
         {
             IEnumerable<object> filtered = values.Where(v => string.IsNullOrWhiteSpace(v?.ToString()) == false);
             return filtered.Any() ? string.Join(separator, filtered) : null;
         }
 
         public static string JoinMeaningful(this char separator,
-                                          params object[] values)
+                                            params object[] values)
         {
             return separator.ToString().JoinMeaningful(values);
         }

@@ -13,12 +13,12 @@ namespace Verbox.Definitions.Parameters
         /// Accepts exactly 1 value
         /// </summary>
         None = 0,
-        
+
         /// <summary>
         /// Accepts 0 or 1 value
         /// </summary>
         Optional = 1,
-        
+
         /// <summary>
         /// Accepts 1 and more values
         /// </summary>

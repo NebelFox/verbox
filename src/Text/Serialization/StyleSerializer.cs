@@ -13,8 +13,8 @@ namespace Verbox.Text.Serialization
     /// </summary>
     public class StyleSerializer
     {
-        private Dictionary<string, Style> _styles;
-        private Dictionary<string, List<(string name, Style style)>> _pending;
+        private readonly Dictionary<string, Style> _styles;
+        private readonly Dictionary<string, List<(string name, Style style)>> _pending;
 
         /// <summary>
         /// Constructs a new instance with no styles deserialized yet
@@ -113,7 +113,7 @@ namespace Verbox.Text.Serialization
         public void Deserialize(JsonElement element, string name)
         {
             Style style = Deserialize(element, out string baseName);
-            if(baseName == null)
+            if (baseName == null)
                 Add(style, name);
             else
                 Add(style, baseName, name);

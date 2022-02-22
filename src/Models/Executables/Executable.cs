@@ -6,7 +6,7 @@ namespace Verbox.Models.Executables
     {
         protected const string HelpSwitch = "--help";
         private readonly string _help;
-        
+
         protected Executable(string help)
         {
             _help = help;

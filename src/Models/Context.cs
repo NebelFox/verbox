@@ -9,13 +9,13 @@ namespace Verbox
     {
         private readonly IReadOnlyDictionary<string, object> _arguments;
 
-        internal Context(Box box, 
-                        IReadOnlyDictionary<string, object> arguments)
+        internal Context(Box box,
+                         IReadOnlyDictionary<string, object> arguments)
         {
             Box = box;
             _arguments = arguments;
         }
-        
+
         /// <summary>
         /// The <see cref="Box"/> the action is called from
         /// </summary>

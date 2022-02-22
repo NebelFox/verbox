@@ -4,23 +4,22 @@ using System.Linq;
 using Verbox.Text;
 using Type = Verbox.Text.Type;
 
-// ReSharper disable once CheckNamespace
 namespace Verbox
 {
     using Typeset = IReadOnlyDictionary<string, Type>;
-    
+
     /// <summary>
     /// Is able to execute commands, prompt for input
     /// and conduct dialogues through the console.
     /// </summary>
     public sealed class Box
     {
-        private readonly Verbox.Models.Executables.Namespace _root;
+        private readonly Models.Executables.Namespace _root;
         private readonly Style _style;
         private readonly Splitter _splitter;
         private bool _isRunning;
 
-        internal Box(Verbox.Models.Executables.Namespace root,
+        internal Box(Models.Executables.Namespace root,
                      Style style)
         {
             _style = style;

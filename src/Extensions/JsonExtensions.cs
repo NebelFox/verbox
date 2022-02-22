@@ -66,14 +66,14 @@ namespace Verbox.Extensions
         }
 
         public static bool TryGetAliasedProperty(this JsonElement container,
-                                                      out JsonProperty value,
-                                                      params string[] names)
+                                                 out JsonProperty value,
+                                                 params string[] names)
         {
             JsonProperty[] match = container.AssertValueKind("container with aliased property",
-                                                            JsonValueKind.Object)
-                                           .EnumerateObject()
-                                           .Where(p => names.Contains(p.Name))
-                                           .ToArray();
+                                                             JsonValueKind.Object)
+                                            .EnumerateObject()
+                                            .Where(p => names.Contains(p.Name))
+                                            .ToArray();
             switch (match.Length)
             {
             case > 1:

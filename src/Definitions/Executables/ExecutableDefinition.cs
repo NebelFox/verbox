@@ -6,7 +6,7 @@ using Type = Verbox.Text.Type;
 namespace Verbox.Definitions.Executables
 {
     using Typeset = IReadOnlyDictionary<string, Type>;
-    
+
     /// <summary>
     /// Base class for <see cref="Command"/> and <see cref="Namespace"/>
     /// </summary>

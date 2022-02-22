@@ -5,7 +5,7 @@
     /// </summary>
     /// <returns>resulting object on success or null on failure</returns>
     public delegate object ParseFunction(string token);
-    
+
     internal class Type
     {
         private readonly ParseFunction _parse;
@@ -15,7 +15,7 @@
             _parse = parse;
             Name = name;
         }
-        
+
         public string Name { get; }
 
         public object Parse(string token) => _parse(token);

@@ -29,7 +29,7 @@ namespace Verbox.Text
 
         public IEnumerable<string> Split(string text)
         {
-            var tokens = new LinkedList<string>();
+            var tokens = new List<string>();
             var token = new StringBuilder();
             State state = State.InSeparator;
             var quote = '\0';
@@ -42,7 +42,7 @@ namespace Verbox.Text
                     token.Append(c);
                     if (c == quote)
                     {
-                        tokens.AddLast(token.ToString());
+                        tokens.Add(token.ToString());
                         token.Clear();
                         state = State.InSeparator;
                     }
@@ -68,7 +68,7 @@ namespace Verbox.Text
                     }
                     else if (c == _separator)
                     {
-                        tokens.AddLast(token.ToString());
+                        tokens.Add(token.ToString());
                         token.Clear();
                         state = State.InSeparator;
                     }
@@ -82,14 +82,13 @@ namespace Verbox.Text
                 }
             }
 
-            // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
             switch (state)
             {
             case State.InQuotes:
                 int position = text.Length - token.Length;
                 throw new FormatException($"No closing quote for quote at {position}");
             case State.InWord:
-                tokens.AddLast(token.ToString());
+                tokens.Add(token.ToString());
                 break;
             }
 

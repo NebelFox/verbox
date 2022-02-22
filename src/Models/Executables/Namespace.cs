@@ -21,14 +21,13 @@ namespace Verbox.Models.Executables
             if (tokens.Contains(HelpSwitch) && tokens.Length == 1)
             {
                 Help();
+                return;
             }
-            else
-            {
-                if (tokens.Length == 0)
-                    throw new ArgumentException("No command name provided");
-                
-                Execute(box, tokens[0], tokens[1..]);
-            }
+
+            if (tokens.Length == 0)
+                throw new ArgumentException("No command name provided");
+
+            Execute(box, tokens[0], tokens[1..]);
         }
 
         private void Execute(Box box, string name, string[] tokens)

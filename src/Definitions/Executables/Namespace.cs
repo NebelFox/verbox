@@ -24,7 +24,7 @@ namespace Verbox
         /// </summary>
         /// <param name="name">namespace name</param>
         /// <param name="brief">namespace short info</param>
-        public Namespace(string name, string brief=null) : base(name, brief)
+        public Namespace(string name, string brief = null) : base(name, brief)
         {
             _executables = new List<ExecutableDefinition>();
         }
@@ -113,8 +113,8 @@ namespace Verbox
         {
             return style["dialogue.semantic-separator"]
                .JoinMeaningful(Description,
-                             string.Join('\n',
-                                         _executables.Select(m => BuildExecutableHelpRow(m, style))));
+                               string.Join('\n',
+                                           _executables.Select(m => BuildExecutableHelpRow(m, style))));
         }
 
         private static string BuildExecutableHelpRow(ExecutableDefinition member, Style style)

@@ -100,7 +100,7 @@ namespace Verbox.Definitions
             return this;
         }
 
-        private static Positional BuildPositional(PositionalDefinition definition, 
+        private static Positional BuildPositional(PositionalDefinition definition,
                                                   Typeset typeset)
         {
             return new Positional(definition.Name,
@@ -123,7 +123,7 @@ namespace Verbox.Definitions
                               defaultValue);
         }
 
-        private static object ParseDefaultValue(OptionDefinition definition, 
+        private static object ParseDefaultValue(OptionDefinition definition,
                                                 Typeset typeset)
         {
             object value = typeset[definition.Parameter.Type].Parse(definition.Default);
@@ -143,8 +143,8 @@ namespace Verbox.Definitions
         internal string BuildHelp()
         {
             return '\n'.JoinMeaningful(string.Join(' ', _positionals.Select(p => p.ToString())),
-                                     string.Join(' ', _switches.Select(name => $"[--{name}]")),
-                                     string.Join(' ', _options.Select(o => o.ToString())));
+                                       string.Join(' ', _switches.Select(name => $"[--{name}]")),
+                                       string.Join(' ', _options.Select(o => o.ToString())));
         }
 
         public SignatureDefinition Copy()
