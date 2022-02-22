@@ -32,7 +32,7 @@ namespace Verbox
         /// Continues to prompt and execute input until terminated
         /// and finally prints the dialogue farewell.
         /// </summary>
-        public void StartDialogue(bool showHelp = true)
+        public Box StartDialogue(bool showHelp = true)
         {
             _isRunning = true;
             Greet();
@@ -46,6 +46,8 @@ namespace Verbox
                 Prompt();
 
             Farewell();
+
+            return this;
         }
 
         /// <summary>
@@ -53,7 +55,7 @@ namespace Verbox
         /// waits for an input from the console
         /// and then tries to execute the gain string command via <see cref="Execute"/>.
         /// </summary>
-        public void Prompt()
+        public Box Prompt()
         {
             Console.Write(_style["dialogue.prompt-indicator"]);
 
@@ -77,6 +79,8 @@ namespace Verbox
             {
                 Separate();
             }
+
+            return this;
         }
 
         /// <summary>
@@ -92,9 +96,10 @@ namespace Verbox
         /// <summary>
         /// Stops the dialogue, if it's going on.
         /// </summary>
-        public void Terminate()
+        public Box Terminate()
         {
             _isRunning = false;
+            return this;
         }
 
         /// <summary>
