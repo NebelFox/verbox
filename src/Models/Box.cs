@@ -62,7 +62,7 @@ namespace Verbox
             var inputs = new LinkedList<string>();
             do
                 inputs.AddLast(Console.ReadLine());
-            while (inputs.Last.Value.EndsWith(_style["input.new-line-escape"]));
+            while (inputs.Last?.Value.EndsWith(_style["input.new-line-escape"]) ?? false);
 
             var input = string.Join(_style["input.separator"],
                                     inputs.Select(i => i.TrimEnd(_style["input.new-line-escape"][0])));
