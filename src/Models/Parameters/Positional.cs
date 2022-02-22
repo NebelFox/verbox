@@ -13,26 +13,25 @@ namespace Verbox.Models.Parameters
         public bool IsMandatory => MinValuesCount > 0;
 
         public object Parse(IReadOnlyList<Token> tokens,
-                            ref int current)
+                            ref int current,
+                            bool optionsEnabled)
         {
             var values = new List<object>();
 
             while (current < tokens.Count
-                && tokens[current].IsValue
+                && (tokens[current].IsValue || tokens[current].IsOption && optionsEnabled == false)
                 && values.Count < MaxValuesCount)
             {
-                string argument = tokens[current].Value;
-                if (Type.TryParse(argument, out object value))
-                {
-                    values.Add(value);
-                    ++current;
-                }
-                else
-                {
+                string argument = tokens[current].GetValue(optionsEnabled);
+                if (Type.TryParse(argument, out object value) == false)
                     throw new ArgumentException(
                         $"Type <{Type.Name}> of positional parameter <{Name}> mismatched the {current + 1}th argument ({argument})");
-                }
+                values.Add(value);
+                ++current;
             }
+
+            current += Convert.ToInt32(current < tokens.Count
+                                    && tokens[current].Type == TokenType.ShortDelimiter);
 
             if (values.Count < MinValuesCount)
                 throw new ArgumentException(

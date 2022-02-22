@@ -33,9 +33,15 @@ namespace Verbox.Models
             var arguments = new Dictionary<string, object>();
             var positionalIndex = 0;
             var current = 0;
+            var optionsEnabled = true;
             while (current < tokens.Count)
             {
-                if (tokens[current].IsOption)
+                if (tokens[current].Type == TokenType.LongDelimiter)
+                {
+                    optionsEnabled = optionsEnabled == false;
+                    ++current;
+                }
+                else if (tokens[current].IsOption && optionsEnabled)
                 {
                     string name = tokens[current++].Value;
                     if (_switches.Contains(name))
@@ -52,7 +58,8 @@ namespace Verbox.Models
                         throw new ArgumentException($"Obscure positional argument: '{tokens[current].Value}'");
                     Positional positional = _positionals[positionalIndex++];
                     arguments[positional.Name] = positional.Parse(tokens,
-                                                                  ref current);
+                                                                  ref current,
+                                                                  optionsEnabled);
                 }
             }
 

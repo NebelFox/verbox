@@ -84,7 +84,10 @@ namespace Verbox
         {
             if (_action == null)
                 throw new InvalidOperationException($"Action for {Name} command not set");
-            var tokenizer = new Tokenizer("'\"", style["option.prefix"]);
+            var tokenizer = new Tokenizer(style["input.quotes"],
+                                          style["option.prefix"],
+                                          style["input.delimiter.short"],
+                                          style["input.delimiter.long"]);
             return new Models.Executables.Command(BuildHelp(style),
                                                   _action,
                                                   _signature.Build(typeset, tokenizer));

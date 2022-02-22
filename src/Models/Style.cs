@@ -21,11 +21,13 @@ namespace Verbox
                                                        ["input.separator"] = " ",
                                                        ["input.quotes"] = "'\"`",
                                                        ["input.new-line-escape"] = "\\",
+                                                       ["input.delimiter.short"] = "-",
+                                                       ["input.delimiter.long"] = "--",
                                                        ["help.lobby.title"] = null,
                                                        ["help.lobby.header"] = null,
                                                        ["help.lobby.footer"] = null,
                                                        ["help.namespace-member-format"] = "> {0} - {1}",
-                                                       ["option.prefix"] = "--",
+                                                       ["option.prefix"] = "--"
                                                    },
                                                    null);
 

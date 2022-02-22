@@ -4,6 +4,8 @@
     {
         Word,
         Quoted,
-        Option
+        Option,
+        ShortDelimiter,
+        LongDelimiter
     }
 }

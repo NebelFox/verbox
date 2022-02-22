@@ -10,7 +10,7 @@ namespace Verbox.Models.Parameters
         public object Parse(IReadOnlyList<Token> tokens,
                             ref int current)
         {
-            return Parameter.Parse(tokens, ref current) ?? Default;
+            return Parameter.Parse(tokens, ref current, true) ?? Default;
         }
     }
 }
