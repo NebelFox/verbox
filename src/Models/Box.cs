@@ -15,17 +15,21 @@ namespace Verbox
     public sealed class Box
     {
         private readonly Models.Executables.Namespace _root;
-        private readonly Style _style;
         private readonly Splitter _splitter;
         private bool _isRunning;
 
         internal Box(Models.Executables.Namespace root,
                      Style style)
         {
-            _style = style;
+            Style = style;
             _root = root;
-            _splitter = new Splitter(_style["input.separator"][0], _style["input.quotes"]);
+            _splitter = new Splitter(Style["input.separator"][0], Style["input.quotes"]);
         }
+
+        /// <summary>
+        /// Current style of the box
+        /// </summary>
+        public Style Style { get; }
 
         /// <summary>
         /// Prints the dialogue greeting,
@@ -57,15 +61,15 @@ namespace Verbox
         /// </summary>
         public Box Prompt()
         {
-            Console.Write(_style["dialogue.prompt-indicator"]);
+            Console.Write(Style["dialogue.prompt-indicator"]);
 
             var inputs = new LinkedList<string>();
             do
                 inputs.AddLast(Console.ReadLine());
-            while (inputs.Last?.Value.EndsWith(_style["input.new-line-escape"]) ?? false);
+            while (inputs.Last?.Value.EndsWith(Style["input.new-line-escape"]) ?? false);
 
-            var input = string.Join(_style["input.separator"],
-                                    inputs.Select(i => i.TrimEnd(_style["input.new-line-escape"][0])));
+            var input = string.Join(Style["input.separator"],
+                                    inputs.Select(i => i.TrimEnd(Style["input.new-line-escape"][0])));
 
             try
             {
@@ -84,13 +88,14 @@ namespace Verbox
         }
 
         /// <summary>
-        /// Executes string command.
+        /// Executes an input and adds it to the history
         /// </summary>
-        /// <param name="command">concrete input</param>
-        public void Execute(string command)
+        /// <param name="command">A string command to execute</param>
+        public Box Execute(string command)
         {
             string[] tokens = _splitter.Split(command).ToArray();
             _root.Execute(this, tokens);
+            return this;
         }
 
         /// <summary>
@@ -105,24 +110,25 @@ namespace Verbox
         /// <summary>
         /// Prints the root help message.
         /// </summary>
-        public void Help()
+        public Box Help()
         {
             _root.Help();
+            return this;
         }
 
         private void Greet()
         {
-            Console.Write(_style["dialogue.greeting"]);
+            Console.Write(Style["dialogue.greeting"]);
         }
 
         private void Separate()
         {
-            Console.Write(_style["dialogue.semantic-separator"]);
+            Console.Write(Style["dialogue.semantic-separator"]);
         }
 
         private void Farewell()
         {
-            Console.Write(_style["dialogue.farewell"]);
+            Console.Write(Style["dialogue.farewell"]);
         }
     }
 }
