@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Verbox.Extensions;
 using Verbox.Text;
 using Type = Verbox.Text.Type;
 
@@ -69,7 +71,7 @@ namespace Verbox
             while (inputs.Last?.Value.EndsWith(Style["input.new-line-escape"]) ?? false);
 
             var input = string.Join(Style["input.separator"],
-                                    inputs.Select(i => i.TrimEnd(Style["input.new-line-escape"][0])));
+                                    inputs.Select(i => i.ChopTail(Style["input.new-line-escape"])));
 
             try
             {
@@ -99,6 +101,37 @@ namespace Verbox
         }
 
         /// <summary>
+        /// Sequentially executes all the commands
+        /// </summary>
+        /// <param name="commands">A sequence of commands</param>
+        public Box Execute(IEnumerable<string> commands)
+        {
+            foreach (string command in commands)
+                Execute(command);
+            return this;
+        }
+
+        /// <summary>
+        /// Executes a sequence of commands.
+        /// Designed for in-code use
+        /// </summary>
+        /// <param name="commands"></param>
+        public Box Execute(params string[] commands)
+        {
+            return Execute(commands.AsEnumerable());
+        }
+
+        /// <summary>
+        /// Sequentially executes each line of the file
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns></returns>
+        public Box ExecuteScript(string filepath)
+        {
+            return Execute(File.ReadLines(filepath));
+        }
+
+        /// <summary>
         /// Stops the dialogue, if it's going on.
         /// </summary>
         public Box Terminate()
@@ -121,9 +154,13 @@ namespace Verbox
             Console.Write(Style["dialogue.greeting"]);
         }
 
-        private void Separate()
+        /// <summary>
+        /// Writes the dialogue.semantic-separator to the console
+        /// </summary>
+        public Box Separate()
         {
             Console.Write(Style["dialogue.semantic-separator"]);
+            return this;
         }
 
         private void Farewell()

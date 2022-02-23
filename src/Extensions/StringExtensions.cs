@@ -78,5 +78,11 @@ namespace Verbox.Extensions
         {
             return separator.ToString().JoinMeaningful(values);
         }
+
+        public static string ChopTail(this string s,
+                                     string tail)
+        {
+            return s.EndsWith(tail) ? s[..^tail.Length] : s;
+        }
     }
 }
