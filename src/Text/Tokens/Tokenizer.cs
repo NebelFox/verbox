@@ -21,7 +21,7 @@ namespace Verbox.Text.Tokens
             _longDelimiter = longDelimiter;
         }
 
-        public IReadOnlyList<Token> Tokenize(IEnumerable<string> values)
+        public Token[] Tokenize(IEnumerable<string> values)
         {
             return values.Select(Tokenize).ToArray();
         }

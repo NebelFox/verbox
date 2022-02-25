@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Verbox.Text.Tokens;
 
 namespace Verbox.Models.Executables
 {
     internal abstract class Executable
     {
-        protected const string HelpSwitch = "--help";
+        private const string HelpSwitch = "help";
         private readonly string _help;
 
         protected Executable(string help)
@@ -12,11 +15,16 @@ namespace Verbox.Models.Executables
             _help = help;
         }
 
-        public abstract void Execute(Box box, string[] tokens);
+        public abstract void Execute(Box box, Token[] tokens);
 
         public void Help()
         {
             Console.Write(_help);
+        }
+
+        protected static bool ContainsHelpSwitch(IEnumerable<Token> tokens)
+        {
+            return tokens.Any(t => t.IsOption && t.Value == HelpSwitch);
         }
     }
 }

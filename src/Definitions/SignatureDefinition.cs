@@ -6,7 +6,6 @@ using Verbox.Definitions.Parameters;
 using Verbox.Extensions;
 using Verbox.Models;
 using Verbox.Models.Parameters;
-using Verbox.Text.Tokens;
 using Type = Verbox.Text.Type;
 
 namespace Verbox.Definitions
@@ -132,12 +131,11 @@ namespace Verbox.Definitions
                 : value;
         }
 
-        internal Signature Build(Typeset typeset, Tokenizer tokenizer)
+        internal Signature Build(Typeset typeset)
         {
             return new Signature(_positionals.Select(p => BuildPositional(p, typeset)),
                                  _switches,
-                                 _options.Select(o => BuildOption(o, typeset)),
-                                 tokenizer);
+                                 _options.Select(o => BuildOption(o, typeset)));
         }
 
         internal string BuildHelp()

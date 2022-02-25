@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Verbox.Text.Tokens;
 
 namespace Verbox.Models.Executables
 {
@@ -16,21 +17,21 @@ namespace Verbox.Models.Executables
                     pair => new KeyValuePair<string, Executable>(pair.Item1, pair.Item2)));
         }
 
-        public override void Execute(Box box, string[] tokens)
+        public override void Execute(Box box, Token[] tokens)
         {
-            if (tokens.Contains(HelpSwitch) && tokens.Length == 1)
+            if (tokens[0].Type != TokenType.Word)
             {
+                if (tokens.Length != 1 || ContainsHelpSwitch(tokens) == false)
+                    throw new InvalidOperationException("Namespace execution attempt");
+                
                 Help();
                 return;
             }
-
-            if (tokens.Length == 0)
-                throw new ArgumentException("No command name provided");
-
-            Execute(box, tokens[0], tokens[1..]);
+            
+            Execute(box, tokens[0].Value, tokens[1..]);
         }
 
-        private void Execute(Box box, string name, string[] tokens)
+        private void Execute(Box box, string name, Token[] tokens)
         {
             if (!_executables.TryGetValue(name, out Executable executable))
                 throw new ArgumentException($"Unknown command: '{name}'");

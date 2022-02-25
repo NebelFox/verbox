@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Verbox.Text.Tokens;
 
 namespace Verbox.Models
 {
     internal class History
     {
-        private readonly List<string[]> _entries;
+        private readonly List<Token[]> _entries;
 
         public History()
         {
-            _entries = new List<string[]>();
+            _entries = new List<Token[]>();
         }
 
-        private IReadOnlyList<string[]> Entries => _entries;
+        private IReadOnlyList<Token[]> Entries => _entries;
 
-        internal void Append(string[] entry)
+        internal void Append(Token[] entry)
         {
             _entries.Add(entry);
         }
@@ -40,10 +41,10 @@ namespace Verbox.Models
 
         private string Join(int index, string separator)
         {
-            return string.Join(separator, Entries[index]);
+            return string.Join(separator, Entries[index].Select(t => t.OriginalValue));
         }
 
-        public IEnumerable<string[]> GetRange(int start = 0, int length = 1)
+        public IEnumerable<Token[]> GetRange(int start = 0, int length = 1)
         {
             return MakeRange(start, length)
                .Select(i => Entries[i]);

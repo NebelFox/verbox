@@ -5,6 +5,7 @@ using System.Linq;
 using Verbox.Extensions;
 using Verbox.Models;
 using Verbox.Text;
+using Verbox.Text.Tokens;
 using Type = Verbox.Text.Type;
 
 namespace Verbox
@@ -20,6 +21,7 @@ namespace Verbox
         private readonly Models.Executables.Namespace _root;
         private readonly Splitter _splitter;
         private readonly History _history;
+        private readonly Tokenizer _tokenizer;
         private bool _isRunning;
 
         internal Box(Models.Executables.Namespace root,
@@ -29,6 +31,10 @@ namespace Verbox
             _root = root;
             _splitter = new Splitter(Style["input.separator"][0], Style["input.quotes"]);
             _history = new History();
+            _tokenizer = new Tokenizer(style["input.quotes"],
+                                       style["option.prefix"],
+                                       style["input.delimiter.short"],
+                                       style["input.delimiter.long"]);
         }
 
         /// <summary>
@@ -99,11 +105,16 @@ namespace Verbox
         /// <param name="notice">Whether to add the execution to the history</param>
         public Box Execute(string command, bool notice = true)
         {
-            string[] tokens = _splitter.Split(command).ToArray();
-            _root.Execute(this, tokens);
-            if (notice)
-                _history.Append(tokens);
+            Token[] tokens = _tokenizer.Tokenize(_splitter.Split(command));
+            Execute(tokens);
             return this;
+        }
+
+        private void Execute(Token[] command, bool notice = true)
+        {
+            _root.Execute(this, command);
+            if (notice)
+                _history.Append(command);
         }
 
         /// <summary>
@@ -155,7 +166,7 @@ namespace Verbox
             _root.Help();
             return this;
         }
-        
+
         ///<summary>
         /// Displays the specific span of input history
         /// </summary>
@@ -198,14 +209,14 @@ namespace Verbox
         /// <param name="length">Length of the span</param>
         /// <param name="times">How many times to repeat the span</param>
         /// <param name="notice">Whether to add the execution to the history</param>
-        public Box Repeat(int start, 
-                          int length = 1, 
+        public Box Repeat(int start,
+                          int length = 1,
                           int times = 1,
                           bool notice = true)
         {
             for (var i = 0; i < times; ++i)
             {
-                foreach (string[] command in _history.GetRange(start, length))
+                foreach (Token[] command in _history.GetRange(start, length))
                     Execute(command, notice);
             }
             return this;

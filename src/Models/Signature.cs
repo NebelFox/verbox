@@ -13,23 +13,19 @@ namespace Verbox.Models
         private readonly IReadOnlyList<Positional> _positionals;
         private readonly IReadOnlySet<string> _switches;
         private readonly IReadOnlyDictionary<string, Option> _options;
-        private readonly Tokenizer _tokenizer;
 
         public Signature(IEnumerable<Positional> positionals,
                          IEnumerable<string> switches,
-                         IEnumerable<Option> options,
-                         Tokenizer tokenizer)
+                         IEnumerable<Option> options)
         {
             _positionals = positionals.ToArray();
             _switches = new SortedSet<string>(switches);
             _options = new Dictionary<string, Option>(
                 options.Select(o => new KeyValuePair<string, Option>(o.Name, o)));
-            _tokenizer = tokenizer;
         }
 
-        public Arguments ParseArguments(IEnumerable<string> input)
+        public Arguments ParseArguments(IReadOnlyList<Token> tokens)
         {
-            IReadOnlyList<Token> tokens = _tokenizer.Tokenize(input);
             var arguments = new Dictionary<string, object>();
             var positionalIndex = 0;
             var current = 0;

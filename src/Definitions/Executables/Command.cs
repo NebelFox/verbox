@@ -4,7 +4,6 @@ using Verbox.Definitions;
 using Verbox.Definitions.Executables;
 using Verbox.Extensions;
 using Verbox.Models.Executables;
-using Verbox.Text.Tokens;
 using Type = Verbox.Text.Type;
 
 namespace Verbox
@@ -84,13 +83,9 @@ namespace Verbox
         {
             if (_action == null)
                 throw new InvalidOperationException($"Action for {Name} command not set");
-            var tokenizer = new Tokenizer(style["input.quotes"],
-                                          style["option.prefix"],
-                                          style["input.delimiter.short"],
-                                          style["input.delimiter.long"]);
             return new Models.Executables.Command(BuildHelp(style),
                                                   _action,
-                                                  _signature.Build(typeset, tokenizer));
+                                                  _signature.Build(typeset));
         }
 
         internal override string BuildHelp(Style style)

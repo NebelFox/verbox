@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Verbox.Text.Tokens;
 
 namespace Verbox.Models.Executables
 {
@@ -19,9 +19,9 @@ namespace Verbox.Models.Executables
             _signature = signature;
         }
 
-        public override void Execute(Box box, string[] tokens)
+        public override void Execute(Box box, Token[] tokens)
         {
-            if (tokens.Contains(HelpSwitch))
+            if (ContainsHelpSwitch(tokens))
             {
                 Help();
             }
