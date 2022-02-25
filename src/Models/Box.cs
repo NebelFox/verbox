@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Verbox.Extensions;
+using Verbox.Models;
 using Verbox.Text;
 using Type = Verbox.Text.Type;
 
@@ -18,6 +19,7 @@ namespace Verbox
     {
         private readonly Models.Executables.Namespace _root;
         private readonly Splitter _splitter;
+        private readonly History _history;
         private bool _isRunning;
 
         internal Box(Models.Executables.Namespace root,
@@ -26,6 +28,7 @@ namespace Verbox
             Style = style;
             _root = root;
             _splitter = new Splitter(Style["input.separator"][0], Style["input.quotes"]);
+            _history = new History();
         }
 
         /// <summary>
@@ -59,7 +62,7 @@ namespace Verbox
         /// <summary>
         /// Writes the dialogue prompt indicator,
         /// waits for an input from the console
-        /// and then tries to execute the gain string command via <see cref="Execute"/>.
+        /// and then tries to execute the gain string command.
         /// </summary>
         public Box Prompt()
         {
@@ -93,10 +96,13 @@ namespace Verbox
         /// Executes an input and adds it to the history
         /// </summary>
         /// <param name="command">A string command to execute</param>
-        public Box Execute(string command)
+        /// <param name="notice">Whether to add the execution to the history</param>
+        public Box Execute(string command, bool notice = true)
         {
             string[] tokens = _splitter.Split(command).ToArray();
             _root.Execute(this, tokens);
+            if (notice)
+                _history.Append(tokens);
             return this;
         }
 
@@ -104,10 +110,11 @@ namespace Verbox
         /// Sequentially executes all the commands
         /// </summary>
         /// <param name="commands">A sequence of commands</param>
-        public Box Execute(IEnumerable<string> commands)
+        /// <param name="notice">Whether to add the execution to the history</param>
+        public Box Execute(IEnumerable<string> commands, bool notice = true)
         {
             foreach (string command in commands)
-                Execute(command);
+                Execute(command, notice);
             return this;
         }
 
@@ -125,10 +132,10 @@ namespace Verbox
         /// Sequentially executes each line of the file
         /// </summary>
         /// <param name="filepath"></param>
-        /// <returns></returns>
-        public Box ExecuteScript(string filepath)
+        /// <param name="notice">Whether to add the execution to the history</param>
+        public Box ExecuteScript(string filepath, bool notice = true)
         {
-            return Execute(File.ReadLines(filepath));
+            return Execute(File.ReadLines(filepath), notice);
         }
 
         /// <summary>
@@ -146,6 +153,70 @@ namespace Verbox
         public Box Help()
         {
             _root.Help();
+            return this;
+        }
+        
+        ///<summary>
+        /// Displays the specific span of input history
+        /// </summary>
+        /// <param name="start">Starting index of the span</param>
+        /// <param name="length">Length of the span</param>
+        public Box ShowHistory(int start = 0,
+                               int length = -1)
+        {
+            Console.WriteLine(_history.Render(Style["input.separator"],
+                                              start,
+                                              length));
+            return this;
+        }
+
+        /// <summary>
+        /// Writes the specific span of the history to a file.
+        /// Each noticed command on a new line.
+        /// </summary>
+        /// <param name="filepath">A file to write to</param>
+        /// <param name="start">Start of the span</param>
+        /// <param name="length">Length of the span</param>
+        /// <param name="appendIfFileExists">Whether to append or overwrite the existing file</param>
+        public Box SaveHistory(string filepath,
+                               int start = 0,
+                               int length = -1,
+                               bool appendIfFileExists = true)
+        {
+            _history.Save(filepath,
+                          Style["input.separator"],
+                          start,
+                          length,
+                          appendIfFileExists);
+            return this;
+        }
+
+        /// <summary>
+        /// Repeats the specific span of the input history 1 or more times
+        /// </summary>
+        /// <param name="start">Starting index of the span</param>
+        /// <param name="length">Length of the span</param>
+        /// <param name="times">How many times to repeat the span</param>
+        /// <param name="notice">Whether to add the execution to the history</param>
+        public Box Repeat(int start, 
+                          int length = 1, 
+                          int times = 1,
+                          bool notice = true)
+        {
+            for (var i = 0; i < times; ++i)
+            {
+                foreach (string[] command in _history.GetRange(start, length))
+                    Execute(command, notice);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Clears the current history
+        /// </summary>
+        public Box ClearHistory()
+        {
+            _history.Clear();
             return this;
         }
 
