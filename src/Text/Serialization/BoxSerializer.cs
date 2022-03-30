@@ -86,13 +86,12 @@ namespace Verbox.Text.Serialization
             JsonProperty commands = element.AssertValueKind("box", JsonValueKind.Object)
                                            .GetAliasedProperty("box",
                                                                "commands",
-                                                               "insert",
-                                                               "insert-command-blocks");
+                                                               "insert-commands");
 
             BoxExtender extender = commands.Name switch
             {
-                "commands"                          => DeserializeCommands(commands.Value),
-                "insert" or "insert-command-blocks" => DeserializeInsert(commands.Value)
+                "commands"        => DeserializeCommands(commands.Value),
+                "insert-commands" => DeserializeInsertCommands(commands.Value)
             };
 
             if (!element.TryGetProperty("style", out JsonElement styleElement))
@@ -115,9 +114,9 @@ namespace Verbox.Text.Serialization
             return new Prefab(extender, GetBoxBase(element));
         }
 
-        private static BoxExtender DeserializeInsert(JsonElement element)
+        private static BoxExtender DeserializeInsertCommands(JsonElement element)
         {
-            return element.AssertValueKind("insert",
+            return element.AssertValueKind("insert-commands",
                                            JsonValueKind.Array,
                                            JsonValueKind.Object)
                           .ValueKind switch
@@ -131,7 +130,7 @@ namespace Verbox.Text.Serialization
 
         private static BoxExtender DeserializeCommands(JsonElement element)
         {
-            return InsertCommandsAt(DeserializeExecutables(element), "end");
+            return InsertCommandsAt(DeserializeExecutables(element), "bottom");
         }
 
         private static BoxExtender DeserializeCommandsInsertBlock(JsonElement block)
@@ -139,23 +138,23 @@ namespace Verbox.Text.Serialization
             block.AssertValueKind("commands insert block", JsonValueKind.Object);
 
             JsonProperty value = block.GetAliasedProperty("commands insert block",
-                                                          "before",
+                                                          "above",
                                                           "at",
-                                                          "after");
+                                                          "below");
             if (block.TryGetProperty("commands", out JsonElement commands) == false)
                 throw new FormatException("commands insert block missed mandatory \"commands\" property");
-            string position = value.Value.AssertValueKind("before|at|after", JsonValueKind.String).GetString();
+            string position = value.Value.AssertValueKind("above|at|below", JsonValueKind.String).GetString();
             ExecutableDefinition[] definitions = DeserializeExecutables(commands);
             return value.Name switch
             {
-                "before" => InsertCommandsBefore(definitions, position),
-                "at"     => InsertCommandsAt(definitions, position),
-                "after"  => InsertCommandsAfter(definitions, position)
+                "above" => InsertCommandsAbove(definitions, position),
+                "at"    => InsertCommandsAt(definitions, position),
+                "below" => InsertCommandsBelow(definitions, position)
             };
         }
 
-        private static BoxExtender InsertCommandsBefore(IReadOnlyList<ExecutableDefinition> definitions,
-                                                        string position)
+        private static BoxExtender InsertCommandsAbove(IReadOnlyList<ExecutableDefinition> definitions,
+                                                       string position)
         {
             return builder =>
             {
@@ -170,21 +169,21 @@ namespace Verbox.Text.Serialization
         {
             return position switch
             {
-                "begin" => builder =>
+                "top" => builder =>
                 {
                     for (int i = definitions.Count - 1; i > -1; --i)
                         builder.Command(definitions[i], true);
                 },
-                "end" => builder =>
+                "bottom" => builder =>
                 {
                     foreach (ExecutableDefinition definition in definitions)
                         builder.Command(definition);
                 },
-                _ => throw new ArgumentException("The \"at\" value must be either \"begin\" or \"end\"")
+                _ => throw new ArgumentException("The \"at\" value must be either \"top\" or \"bottom\"")
             };
         }
 
-        private static BoxExtender InsertCommandsAfter(IReadOnlyList<ExecutableDefinition> definitions,
+        private static BoxExtender InsertCommandsBelow(IReadOnlyList<ExecutableDefinition> definitions,
                                                        string position)
         {
             return builder =>
