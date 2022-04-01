@@ -94,7 +94,7 @@ namespace Verbox.Text.Serialization
                 "insert-commands" => DeserializeInsertCommands(commands.Value)
             };
 
-            if (!element.TryGetProperty("style", out JsonElement styleElement))
+            if (element.TryGetProperty("style", out JsonElement styleElement) == false)
                 return new Prefab(extender, GetBoxBase(element));
             switch (styleElement.ValueKind)
             {
@@ -108,7 +108,7 @@ namespace Verbox.Text.Serialization
                 extender += builder => builder.Style(_styles[styleElement.GetString()]);
                 break;
             default:
-                throw new FormatException("Box style element must be either an object or a string");
+                throw new FormatException("Box style element must be object|string");
             }
 
             return new Prefab(extender, GetBoxBase(element));
@@ -143,7 +143,7 @@ namespace Verbox.Text.Serialization
                                                           "below");
             if (block.TryGetProperty("commands", out JsonElement commands) == false)
                 throw new FormatException("commands insert block missed mandatory \"commands\" property");
-            string position = value.Value.AssertValueKind("above|at|below", JsonValueKind.String).GetString();
+            string position = value.Value.AssertValueKind("position", JsonValueKind.String).GetString();
             ExecutableDefinition[] definitions = DeserializeExecutables(commands);
             return value.Name switch
             {
@@ -179,7 +179,7 @@ namespace Verbox.Text.Serialization
                     foreach (ExecutableDefinition definition in definitions)
                         builder.Command(definition);
                 },
-                _ => throw new ArgumentException("The \"at\" value must be either \"top\" or \"bottom\"")
+                _ => throw new ArgumentException("The \"at\" value must be top|bottom")
             };
         }
 
