@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text.Json;
 using Verbox.Extensions;
 
-namespace Verbox.Text.Serialization
+namespace Verbox.Deserialization
 {
     using Aspect = KeyValuePair<string, string>;
 
     /// <summary>
     /// Deserializes styles specification to <see cref="Style"/> from JSON
     /// </summary>
-    public class StyleSerializer
+    public class StyleDeserializer
     {
         private readonly Dictionary<string, Style> _styles;
         private readonly Dictionary<string, List<(string name, Style style)>> _pending;
@@ -19,7 +19,7 @@ namespace Verbox.Text.Serialization
         /// <summary>
         /// Constructs a new instance with no styles deserialized yet
         /// </summary>
-        public StyleSerializer()
+        public StyleDeserializer()
         {
             _styles = new Dictionary<string, Style> { ["default"] = Style.Default };
             _pending = new Dictionary<string, List<(string name, Style style)>>();

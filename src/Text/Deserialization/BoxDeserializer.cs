@@ -5,27 +5,27 @@ using System.Text.Json;
 using Verbox.Definitions.Executables;
 using Verbox.Extensions;
 
-namespace Verbox.Text.Serialization
+namespace Verbox.Deserialization
 {
     /// <summary>
     /// Deserializes boxes specification to from JSON <see cref="BoxBuilder"/>.
-    /// Gets required styles from the provided <see cref="StyleSerializer"/>
+    /// Gets required styles from the provided <see cref="StyleDeserializer"/>
     /// </summary>
-    public class BoxSerializer
+    public class BoxDeserializer
     {
         private delegate void BoxExtender(BoxBuilder builder);
 
         private record Prefab(BoxExtender Extender, string Base = null);
 
-        private readonly StyleSerializer _styles;
+        private readonly StyleDeserializer _styles;
         private readonly Dictionary<string, Prefab> _boxes;
 
         /// <summary>
-        /// Constructs a new instance with given <see cref="StyleSerializer"/>
+        /// Constructs a new instance with given <see cref="StyleDeserializer"/>
         /// as the styles main source
         /// </summary>
         /// <param name="styles">Where to get the required styles from</param>
-        public BoxSerializer(StyleSerializer styles)
+        public BoxDeserializer(StyleDeserializer styles)
         {
             _boxes = new Dictionary<string, Prefab>();
             _styles = styles;

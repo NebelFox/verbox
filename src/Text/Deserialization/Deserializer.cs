@@ -2,31 +2,31 @@
 using System.Text.Json;
 using Verbox.Extensions;
 
-namespace Verbox.Text.Serialization
+namespace Verbox.Deserialization
 {
     /// <summary>
     /// Deserializes complex JSON files of full specifications
     /// </summary>
-    public class Serializer
+    public class Deserializer
     {
         /// <summary>
         /// Constructs a new instance with no styles or boxes
         /// </summary>
-        public Serializer()
+        public Deserializer()
         {
-            Styles = new StyleSerializer();
-            Boxes = new BoxSerializer(Styles);
+            Styles = new StyleDeserializer();
+            Boxes = new BoxDeserializer(Styles);
         }
 
         /// <summary>
         /// Access to already deserialized boxes
         /// </summary>
-        public BoxSerializer Boxes { get; }
+        public BoxDeserializer Boxes { get; }
 
         /// <summary>
         /// Access to already deserialized styles
         /// </summary>
-        public StyleSerializer Styles { get; }
+        public StyleDeserializer Styles { get; }
 
         /// <summary>
         /// Deserializes a JSON in the specified file
