@@ -1,4 +1,9 @@
-﻿namespace Verbox.Definitions.Parameters
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using Verbox.Models.Parameters;
+using Verbox.Text;
+
+namespace Verbox.Definitions.Parameters
 {
     internal record PositionalDefinition(string Name,
                                          string Type,
@@ -13,5 +18,20 @@
         private string RepresentType() => Type != "string" ? $":{Type}" : string.Empty;
         private string RepresentCollective() => Tags.HasFlag(ArgTags.Collective) ? "..." : string.Empty;
         private string Postfix => Tags.HasFlag(ArgTags.Optional) ? "]" : string.Empty;
+
+        public Positional Build(IReadOnlyDictionary<string, Type> typeset)
+        {
+            Type type = typeset[Type];
+            return Tags switch
+            {
+                ArgTags.None       => new Positional(Name, type),
+                ArgTags.Optional   => new Optional(Name, type),
+                ArgTags.Collective => new Collective(Name, type),
+                (ArgTags)0b11      => new CollectiveOptional(Name, type),
+                _ => throw new InvalidEnumArgumentException(nameof(Tags), 
+                                                            (int)Tags, 
+                                                            typeof(ArgTags))
+            };
+        }
     }
 }

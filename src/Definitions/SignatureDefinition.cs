@@ -89,26 +89,13 @@ namespace Verbox.Definitions
             _switches.Add(name);
         }
 
-        private static Positional BuildPositional(PositionalDefinition definition,
-                                                  Typeset typeset)
-        {
-            return new Positional(definition.Name,
-                                  typeset[definition.Type],
-                                  MinValuesCount(definition.Tags),
-                                  MaxValuesCount(definition.Tags));
-        }
-
-        private static int MinValuesCount(ArgTags tags) => tags.HasFlag(ArgTags.Optional) ? 0 : 1;
-
-        private static int MaxValuesCount(ArgTags tags) => tags.HasFlag(ArgTags.Collective) ? int.MaxValue : 1;
-
         private static Option BuildOption(OptionDefinition definition, Typeset typeset)
         {
             object defaultValue = definition.Default != null
                 ? ParseDefaultValue(definition, typeset)
                 : null;
             return new Option(definition.Name,
-                              BuildPositional(definition.Parameter, typeset),
+                              definition.Parameter.Build(typeset),
                               defaultValue);
         }
 
@@ -116,14 +103,14 @@ namespace Verbox.Definitions
                                                 Typeset typeset)
         {
             object value = typeset[definition.Parameter.Type].Parse(definition.Default);
-            return MaxValuesCount(definition.Parameter.Tags) > 1
+            return definition.Parameter.Tags.HasFlag(ArgTags.Collective)
                 ? new[] { value }
                 : value;
         }
 
         internal Signature Build(Typeset typeset)
         {
-            return new Signature(_positionals.Select(p => BuildPositional(p, typeset)),
+            return new Signature(_positionals.Select(p => p.Build(typeset)),
                                  _switches,
                                  _options.Select(o => BuildOption(o, typeset)));
         }
