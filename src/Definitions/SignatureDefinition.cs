@@ -36,7 +36,7 @@ namespace Verbox.Definitions
             _options = new List<OptionDefinition>();
         }
 
-        public SignatureDefinition Parameter(string definition)
+        public void Parameter(string definition)
         {
             Match match = ParameterDefinitionRegex.Match(definition);
             if (match.Success == false
@@ -44,7 +44,10 @@ namespace Verbox.Definitions
                 throw new ArgumentException("Invalid definition format", nameof(definition));
 
             if (match.Groups["positional"].Success == false)
-                return Option(match.Groups["names"].Value);
+            {
+                Option(match.Groups["names"].Value);
+                return;
+            }
 
             string name = match.Groups["name"].Value;
             string type = match.Groups["type"].Success ? match.Groups["type"].Value : "string";
@@ -56,47 +59,34 @@ namespace Verbox.Definitions
                 tags |= ArgTags.Collective;
 
             if (match.Groups["option"].Success == false)
-                return Positional(name, type, tags);
+            {
+                Positional(name, type, tags);
+                return;
+            }
 
             string @default = match.Groups["default"].Success ? match.Groups["default"].Value : null;
-            return Option(match.Groups["names"].Value,
-                          name,
-                          type,
-                          tags,
-                          @default);
+            Option(match.Groups["names"].Value,
+                   new PositionalDefinition(name, type, tags),
+                   @default);
         }
 
-        public SignatureDefinition Positional(string name,
-                                              string type,
-                                              ArgTags tags = ArgTags.None)
+        private void Positional(string name,
+                                string type,
+                                ArgTags tags)
         {
             _positionals.Add(new PositionalDefinition(name, type, tags));
-            return this;
         }
 
-        public SignatureDefinition Positional(string name,
-                                              ArgTags tags = ArgTags.None)
+        private void Option(string name,
+                            PositionalDefinition parameter,
+                            string defaultValue = null)
         {
-            return Positional(name, "string", tags);
-        }
-
-        public SignatureDefinition Option(string name,
-                                          string paramName,
-                                          string paramType,
-                                          ArgTags paramTags = ArgTags.None,
-                                          string defaultValue = null)
-        {
-            var parameter = new PositionalDefinition(paramName,
-                                                     paramType,
-                                                     paramTags);
             _options.Add(new OptionDefinition(name, parameter, defaultValue));
-            return this;
         }
 
-        public SignatureDefinition Option(string name)
+        private void Option(string name)
         {
             _switches.Add(name);
-            return this;
         }
 
         private static Positional BuildPositional(PositionalDefinition definition,
