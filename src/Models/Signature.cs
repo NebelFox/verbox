@@ -13,6 +13,9 @@ namespace Verbox.Models
         private readonly IReadOnlyList<Positional> _positionals;
         private readonly IReadOnlySet<string> _switches;
         private readonly IReadOnlyDictionary<string, Option> _options;
+        private int _positionalIndex;
+        private int _current;
+        private bool _optionsEnabled = true;
 
         public Signature(IEnumerable<Positional> positionals,
                          IEnumerable<string> switches,
@@ -27,54 +30,63 @@ namespace Verbox.Models
         public Arguments ParseArguments(IReadOnlyList<Token> tokens)
         {
             var arguments = new Dictionary<string, object>();
-            var positionalIndex = 0;
-            var current = 0;
-            var optionsEnabled = true;
-            while (current < tokens.Count)
+            _positionalIndex = 0;
+            _current = 0;
+            _optionsEnabled = true;
+            while (_current < tokens.Count)
             {
-                if (tokens[current].Type == TokenType.LongDelimiter)
+                if (tokens[_current].Type == TokenType.LongDelimiter)
                 {
-                    optionsEnabled = optionsEnabled == false;
-                    ++current;
+                    _optionsEnabled = _optionsEnabled == false;
+                    ++_current;
                 }
-                else if (tokens[current].IsOption && optionsEnabled)
+                else if (tokens[_current].IsOption && _optionsEnabled)
                 {
-                    string name = tokens[current++].Value;
-                    if (_switches.Contains(name))
-                        arguments[name] = true;
-                    else if (_options.TryGetValue(name, out Option option))
-                        arguments[name] = option.Parse(tokens, ref current);
-                    else
-                        throw new ArgumentException($"Unknown option: \"{name}\"");
+                    string name = tokens[_current++].Value;
+                    arguments[name] = ParseOption(name, tokens);
                 }
                 else
                 {
-                    if (positionalIndex >= _positionals.Count)
-                        throw new ArgumentException($"Obscure positional argument: '{tokens[current].Value}'");
-                    Positional positional = _positionals[positionalIndex++];
-                    arguments[positional.Name] = positional.Parse(tokens,
-                                                                  ref current,
-                                                                  optionsEnabled);
+                    ParsePositional(tokens, arguments);
                 }
             }
 
-            if (positionalIndex < _positionals.Count && AnyMandatoryPositionalsInTail(positionalIndex))
-                throw new ArgumentException(
-                    $"{_positionals.Count - positionalIndex} mandatory positional parameter(s) missed value(s)");
+            SetOmittedPositionalsToDefault(arguments);
             SetOmittedOptionsToDefaults(arguments);
             return arguments;
         }
 
-        private bool AnyMandatoryPositionalsInTail(int start)
+        private void ParsePositional(IReadOnlyList<Token> tokens,
+                                     IDictionary<string, object> arguments)
         {
-            return Enumerable.Range(start, _positionals.Count - start)
-                             .Any(i => _positionals[i].IsMandatory);
+            if (_positionalIndex >= _positionals.Count)
+                throw new ArgumentException($"Obscure positional argument: '{tokens[_current].Value}'");
+            Positional positional = _positionals[_positionalIndex++];
+            arguments[positional.Name] = positional.Parse(tokens,
+                                                          ref _current,
+                                                          _optionsEnabled);
+        }
+
+        private object ParseOption(string name,
+                                   IReadOnlyList<Token> tokens)
+        {
+            if (_switches.Contains(name))
+                return true;
+
+            if (_options.TryGetValue(name, out Option option))
+                return option.Parse(tokens, ref _current);
+
+            throw new ArgumentException($"Unknown option: \"{name}\"");
+        }
+
+        private void SetOmittedPositionalsToDefault(IDictionary<string, object> arguments)
+        {
+            foreach (Positional positional in _positionals.Skip(_positionalIndex))
+                arguments.Add(positional.Name, positional.Default);
         }
 
         private void SetOmittedOptionsToDefaults(Dictionary<string, object> arguments)
         {
-            foreach (Positional positional in _positionals)
-                arguments.TryAdd(positional.Name, positional.Default);
             foreach (Option option in _options.Values)
                 arguments.TryAdd(option.Name, option.Default);
             foreach (string name in _switches)
