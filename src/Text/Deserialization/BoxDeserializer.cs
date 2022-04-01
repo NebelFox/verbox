@@ -13,7 +13,11 @@ namespace Verbox.Deserialization
     /// </summary>
     public class BoxDeserializer
     {
-        private delegate void BoxExtender(BoxBuilder builder);
+        /// <summary>
+        /// A function, that extends a <see cref="BoxBuilder"/> instance via calling its methods.
+        /// Primarily used to assign actions to commands of base boxes
+        /// </summary>
+        public delegate void BoxExtender(BoxBuilder builder);
 
         private record Prefab(BoxExtender Extender, string Base = null);
 
@@ -45,6 +49,20 @@ namespace Verbox.Deserialization
             BoxBuilder builder = prefab.Base != null ? Get(prefab.Base) : new BoxBuilder();
             prefab.Extender.Invoke(builder);
             return builder;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name">A box to extend</param>
+        /// <param name="extender">how to extend the box</param>
+        /// <exception cref="KeyNotFoundException">If such box was not deserialized yet</exception>
+        public void Extend(string name,
+                           BoxExtender extender)
+        {
+            if (_boxes.TryGetValue(name, out Prefab prefab) == false)
+                throw new KeyNotFoundException($"Unknown base box: {name}");
+            _boxes[name] = prefab with { Extender = prefab.Extender + extender };
         }
 
         /// <summary>
