@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Verbox.Text.Tokens;
 using Type = Verbox.Text.Type;
 
@@ -37,14 +38,7 @@ namespace Verbox.Models.Parameters
                 throw new ArgumentException(
                     $"Parameter \"{Name}\" expected at least {MinValuesCount} value, but actually got {values.Count}");
 
-            if (MaxValuesCount > 1)
-                return values.ToArray();
-            return values.Count switch
-            {
-                0 => null,
-                1 => values[0],
-                _ => values.ToArray()
-            };
+            return MaxValuesCount > 1 ? values.ToArray() : values.Append(null).First();
         }
 
         public object Default => MaxValuesCount > 1 ? Array.Empty<object>() : null;
