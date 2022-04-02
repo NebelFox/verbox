@@ -4,13 +4,16 @@ using Type = Verbox.Text.Type;
 
 namespace Verbox.Models.Parameters
 {
-    internal record Optional(string Name, Type Type) : Positional(Name, Type)
+    internal class Optional : Positional
     {
+        public Optional(string name, Type type) : base(name, type)
+        { }
+
         protected override int MinValuesCount => 0;
-        
+
         protected override object ComposeArgs(IReadOnlyList<object> values)
         {
-            return values.Append(null).First();
+            return values.Append(Default).First();
         }
 
         public override object Default => null;

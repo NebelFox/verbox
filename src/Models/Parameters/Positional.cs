@@ -5,8 +5,17 @@ using Type = Verbox.Text.Type;
 
 namespace Verbox.Models.Parameters
 {
-    internal record Positional(string Name, Type Type)
+    internal class Positional
     {
+        public string Name { get; }
+        private readonly Type _type;
+
+        public Positional(string name, Type type)
+        {
+            Name = name;
+            _type = type;
+        }
+
         protected virtual int MinValuesCount => 1;
         protected virtual int MaxValuesCount => 1;
 
@@ -40,10 +49,10 @@ namespace Verbox.Models.Parameters
         private object ParseToken(Token token, int index, bool optionsEnabled)
         {
             string argument = token.GetValue(optionsEnabled);
-            if (Type.TryParse(argument, out object value))
+            if (_type.TryParse(argument, out object value))
                 return value;
             throw new ArgumentException(
-                $"Type <{Type.Name}> of positional parameter <{Name}> mismatched the {index + 1}-th global argument ({argument})");
+                $"Type <{_type.Name}> of positional parameter <{Name}> mismatched the {index + 1}-th global argument ({argument})");
         }
 
         private void AssertEnoughValues(int actual)
@@ -60,6 +69,7 @@ namespace Verbox.Models.Parameters
             return values[0];
         }
 
-        public virtual object Default => throw new ArgumentException($"Mandatory positional parameter {Name} missed arguments");
+        public virtual object Default =>
+            throw new ArgumentException($"Mandatory positional parameter {Name} missed arguments");
     }
 }

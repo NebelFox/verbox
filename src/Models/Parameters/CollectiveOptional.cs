@@ -3,8 +3,11 @@ using Type = Verbox.Text.Type;
 
 namespace Verbox.Models.Parameters
 {
-    internal record CollectiveOptional(string Name, Type Type) : Collective(Name, Type)
+    internal class CollectiveOptional : Collective
     {
+        public CollectiveOptional(string name, Type type) : base(name, type)
+        { }
+
         protected override int MinValuesCount => 0;
 
         public override object Default => Array.Empty<object>();
