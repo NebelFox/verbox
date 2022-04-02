@@ -13,7 +13,5 @@ namespace Verbox.Models.Parameters
         {
             return values.ToArray();
         }
-
-        public override object Default => Array.Empty<object>();
     }
 }
