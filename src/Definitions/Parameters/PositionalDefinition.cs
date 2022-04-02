@@ -7,11 +7,12 @@ namespace Verbox.Definitions.Parameters
 {
     internal record PositionalDefinition(string Name,
                                          string Type,
-                                         ArgTags Tags)
+                                         ArgTags Tags,
+                                         string Brief) : ParameterDefinition(Name, Brief)
     {
         public override string ToString()
         {
-            return $"{Prefix}{Name}{RepresentType()}{RepresentCollective()}{Postfix}";
+            return $"{Prefix}{Name}{RepresentType()}{RepresentCollective()}{Postfix}{RepresentBrief()}";
         }
 
         private string Prefix => Tags.HasFlag(ArgTags.Optional) ? "[" : string.Empty;
