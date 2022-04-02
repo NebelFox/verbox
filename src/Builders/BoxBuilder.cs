@@ -151,20 +151,47 @@ namespace Verbox
         }
 
         /// <summary>
+        /// Call a function on a Command/Namespace
+        /// </summary>
+        /// <param name="path">full name of the executable of interest</param>
+        /// <param name="apply">function to call on the executable</param>
+        /// <typeparam name="TExecutable"> <see cref="Verbox.Command"/>/<see cref="Namespace"/> </typeparam>
+        /// <exception cref="ArgumentException">
+        /// If specified executable is not a <see cref="TExecutable"/>
+        /// </exception>
+        public BoxBuilder Apply<TExecutable>(string path, 
+                                             Action<TExecutable> apply) where TExecutable : ExecutableDefinition
+        {
+            if (GetByPath(path) is not TExecutable executable)
+                throw new ArgumentException($"{path} is not a {typeof(TExecutable).Name}");
+            apply(executable);
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the action to the command, specified by the full path to it
+        /// </summary>
+        /// <param name="path">path to <see cref="Verbox.Command"/> of interest</param>
+        /// <param name="action">action to appoint</param>
+        /// <exception cref="InvalidOperationException">
+        /// Specified command is <see cref="Namespace"/> </exception>
+        public BoxBuilder SetAction(string path, Action<Context> action)
+        {
+            return Apply<Command>(path, command => command.Action(action));
+        }
+
+        /// <summary>
         /// For each dictionary pair gets it's target command by specified path
         /// and appoints action in pair to it
         /// </summary>
         /// <param name="actions">Dictionary of pairs "path:action"</param>
         /// <exception cref="InvalidOperationException">The executable by a path is not a command</exception>
         /// <exception cref="ArgumentException">A path doesn't exist</exception>>
-        public void SetActionsByPaths(IReadOnlyDictionary<string, Action<Context>> actions)
+        public BoxBuilder SetActionsByPaths(IReadOnlyDictionary<string, Action<Context>> actions)
         {
             foreach ((string path, Action<Context> action) in actions)
-            {
-                if (GetByPath(path) is not Command command)
-                    throw new InvalidOperationException($"Executable at \"{path}\" must be a command, not a namespace");
-                command.Action(action);
-            }
+                SetAction(path, action);
+            return this;
         }
 
         /// <summary>
@@ -172,18 +199,19 @@ namespace Verbox
         /// sets the given function as action
         /// </summary>
         /// <param name="action">a function to set to all commands without action</param>
-        public void SetMissingActions(Action<Context> action)
+        public BoxBuilder SetMissingActions(Action<Context> action)
         {
             _root.SetMissingActions(action);
+            return this;
         }
 
         /// <summary>
         /// For each command without any action already set,
         /// sets the action to a function that does nothing
         /// </summary>
-        public void SetMissingActionsToDummy()
+        public BoxBuilder SetMissingActionsToDummy()
         {
-            _root.SetMissingActions(_ => { });
+            return SetMissingActions(_ => { });
         }
 
         /// <summary>
