@@ -6,7 +6,7 @@ using Verbox.Extensions;
 using Verbox.Text;
 using Type = Verbox.Text.Type;
 
-// ReSharper disable once CheckNamespace
+
 namespace Verbox
 {
     /// <summary>
@@ -32,7 +32,7 @@ namespace Verbox
         /// </summary>
         public BoxBuilder()
         {
-            _root = new Namespace(null, null);
+            _root = new Namespace(null);
             _types = new List<Type>();
             Type("string", token => token);
             _style = Verbox.Style.Default;
