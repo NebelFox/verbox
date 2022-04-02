@@ -44,7 +44,7 @@ namespace Verbox.Definitions
              || match.Groups["option"].Success == false && match.Groups["positional"].Success == false)
                 throw new ArgumentException("Invalid definition format", nameof(definition));
 
-            string brief = match.Groups["brief"].Success ? match.Groups["brief"].Value : null;
+            string brief = match.Groups["brief"].ValueOrDefault();
 
             if (match.Groups["positional"].Success == false)
             {
@@ -53,7 +53,7 @@ namespace Verbox.Definitions
             }
 
             string name = match.Groups["name"].Value;
-            string type = match.Groups["type"].Success ? match.Groups["type"].Value : "string";
+            string type = match.Groups["type"].ValueOrDefault("string");
 
             ArgTags tags = ArgTags.None;
             if (match.Groups["optional"].Success)
@@ -67,7 +67,7 @@ namespace Verbox.Definitions
                 return;
             }
 
-            string @default = match.Groups["default"].Success ? match.Groups["default"].Value : null;
+            string @default = match.Groups["default"].ValueOrDefault();
             Option(match.Groups["names"].Value,
                    new PositionalDefinition(name, type, tags, null),
                    @default,
