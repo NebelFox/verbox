@@ -123,9 +123,14 @@ namespace Verbox.Definitions
 
         internal string BuildHelp()
         {
-            return '\n'.JoinMeaningful(string.Join(' ', _positionals.Select(p => p.ToString())),
-                                       string.Join(' ', _switches.Select(name => $"[--{name}]")),
-                                       string.Join(' ', _options.Select(o => o.ToString())));
+            return "\n\n".JoinMeaningful(BuildParametersHelp("POSITIONAL PARAMETERS", _positionals),
+                                         BuildParametersHelp("SWITCHES", _switches),
+                                         BuildParametersHelp("OPTIONS", _options));
+        }
+
+        private static string BuildParametersHelp(string title, IEnumerable<ParameterDefinition> parameters)
+        {
+            return $"{title}:\n\t{string.Join("\t\n", parameters.Select(p => p.ToString()))}";
         }
 
         public SignatureDefinition Copy()
