@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text;
 using Verbox.Models.Parameters;
 using Verbox.Text;
 
@@ -12,13 +13,18 @@ namespace Verbox.Definitions.Parameters
     {
         public override string ToString()
         {
-            return $"{Prefix}{Name}{RepresentType()}{RepresentCollective()}{Postfix}{RepresentBrief()}";
-        }
+            var builder = new StringBuilder();
+            builder.Append(Name);
+            if (Type != "string")
+                builder.Append(':').Append(Type);
+            if (Tags.HasFlag(ArgTags.Collective))
+                builder.Append("...");
+            if (Tags.HasFlag(ArgTags.Optional))
+                builder.Insert(0, '[').Append(']');
+            builder.Append(RepresentBrief());
 
-        private string Prefix => Tags.HasFlag(ArgTags.Optional) ? "[" : string.Empty;
-        private string RepresentType() => Type != "string" ? $":{Type}" : string.Empty;
-        private string RepresentCollective() => Tags.HasFlag(ArgTags.Collective) ? "..." : string.Empty;
-        private string Postfix => Tags.HasFlag(ArgTags.Optional) ? "]" : string.Empty;
+            return builder.ToString();
+        }
 
         public Positional Build(IReadOnlyDictionary<string, Type> typeset)
         {
