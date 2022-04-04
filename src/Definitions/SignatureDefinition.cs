@@ -131,9 +131,11 @@ namespace Verbox.Definitions
                                          BuildParametersHelp("OPTIONS", _options));
         }
 
-        private static string BuildParametersHelp(string title, IEnumerable<ParameterDefinition> parameters)
+        private static string BuildParametersHelp(string title,
+                                                  IEnumerable<ParameterDefinition> parameters)
         {
-            return $"{title}:\n\t{string.Join("\t\n", parameters.Select(p => p.ToString()))}";
+            string list = string.Join("\n\t", parameters.Select(p => p.ToString()));
+            return string.IsNullOrEmpty(list) ? null : $"{title}:\n\t{list}";
         }
 
         public SignatureDefinition Copy()
