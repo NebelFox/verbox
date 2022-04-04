@@ -108,7 +108,10 @@ namespace Verbox.Definitions
         private static object ParseDefaultValue(OptionDefinition definition,
                                                 Typeset typeset)
         {
-            object value = typeset[definition.Parameter.Type].Parse(definition.Default);
+            Type type = typeset[definition.Parameter.Type];
+            if (type.TryParse(definition.Default, out object value) == false)
+                throw new FormatException(
+                    $"Type {type.Name} mismatched default value of {definition.Name} option ({definition.Default})");
             return definition.Parameter.Tags.HasFlag(ArgTags.Collective)
                 ? new[] { value }
                 : value;
