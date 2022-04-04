@@ -45,7 +45,7 @@ namespace Verbox.Deserialization
         private BoxBuilder Get(string name)
         {
             if (_boxes.TryGetValue(name, out Prefab prefab) == false)
-                throw new KeyNotFoundException($"Unknown base box: {name}");
+                throw new KeyNotFoundException($"Unknown box: {name}");
             BoxBuilder builder = prefab.Base != null ? Get(prefab.Base) : new BoxBuilder();
             prefab.Extender.Invoke(builder);
             return builder;
