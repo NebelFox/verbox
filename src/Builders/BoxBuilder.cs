@@ -238,7 +238,7 @@ namespace Verbox
 
         private IReadOnlyDictionary<string, Type> BuildTypeset()
         {
-            return new Dictionary<string, Type>(_types.Select(t => new KeyValuePair<string, Type>(t.Name, t)));
+            return _types.ToDictionary(t => t.Name);
         }
 
         /// <summary>
