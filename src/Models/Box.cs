@@ -51,7 +51,6 @@ namespace Verbox
         {
             _isRunning = true;
             Greet();
-            Separate();
             if (showHelp)
             {
                 Help();
@@ -236,7 +235,11 @@ namespace Verbox
 
         private void Greet()
         {
+            if (Style["dialogue.greeting"] is null)
+                return;
+            
             Console.WriteLine(Style["dialogue.greeting"]);
+            Separate();
         }
 
         /// <summary>
@@ -250,7 +253,8 @@ namespace Verbox
 
         private void Farewell()
         {
-            Console.WriteLine(Style["dialogue.farewell"]);
+            if (Style["dialogue.farewell"] is not null)
+                Console.WriteLine(Style["dialogue.farewell"]);
         }
     }
 }
