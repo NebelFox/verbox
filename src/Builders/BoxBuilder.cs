@@ -229,11 +229,11 @@ namespace Verbox
 
         private string BuildHelp()
         {
-            return _style["dialogue.semantic-separator"]
-               .JoinMeaningful(_style["help.lobby.title"],
-                               _style["help.lobby.header"],
+            return (_style["dialogue.semantic-separator"] + "\n")
+               .JoinMeaningful(_style["help.lobby.title"].ChopTail("\n"),
+                               _style["help.lobby.header"].ChopTail("\n"),
                                _root.BuildHelp(_style),
-                               _style["help.lobby.footer"]);
+                               _style["help.lobby.footer"].ChopTail("\n"));
         }
 
         private IReadOnlyDictionary<string, Type> BuildTypeset()
