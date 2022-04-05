@@ -157,7 +157,7 @@ namespace Verbox
         /// <param name="apply">function to call on the executable</param>
         /// <typeparam name="TExecutable"> <see cref="Verbox.Command"/>/<see cref="Namespace"/> </typeparam>
         /// <exception cref="ArgumentException">
-        /// If specified executable is not a <see cref="TExecutable"/>
+        /// If specified executable is not an instance of TExecutable/>
         /// </exception>
         public BoxBuilder Apply<TExecutable>(string path, 
                                              Action<TExecutable> apply) where TExecutable : ExecutableDefinition
