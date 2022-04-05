@@ -104,9 +104,11 @@ namespace Verbox
             return new Models.Executables.Namespace(help, BuildExecutables(style, typeset));
         }
 
-        private IEnumerable<(string, Executable)> BuildExecutables(Style style, Typeset typeset)
+        private Dictionary<string, Executable> BuildExecutables(Style style, Typeset typeset)
         {
-            return _executables.Select(e => (e.Name, e.Build(style, typeset)));
+            return new Dictionary<string, Executable>(
+                _executables.Select(
+                    e => new KeyValuePair<string, Executable>(e.Name, e.Build(style, typeset))));
         }
 
         internal override string BuildHelp(Style style)
