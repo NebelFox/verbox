@@ -58,7 +58,10 @@ namespace Verbox
                 Separate();
             }
             while (_isRunning)
+            {
                 Prompt();
+                Separate();
+            }
 
             Farewell();
 
@@ -233,7 +236,7 @@ namespace Verbox
 
         private void Greet()
         {
-            Console.Write(Style["dialogue.greeting"]);
+            Console.WriteLine(Style["dialogue.greeting"]);
         }
 
         /// <summary>
@@ -247,7 +250,7 @@ namespace Verbox
 
         private void Farewell()
         {
-            Console.Write(Style["dialogue.farewell"]);
+            Console.WriteLine(Style["dialogue.farewell"]);
         }
     }
 }

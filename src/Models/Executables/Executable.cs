@@ -19,7 +19,7 @@ namespace Verbox.Models.Executables
 
         public void Help()
         {
-            Console.Write(_help);
+            Console.WriteLine(_help);
         }
 
         protected static bool ContainsHelpSwitch(IEnumerable<Token> tokens)
